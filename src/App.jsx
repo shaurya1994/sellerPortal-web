@@ -1,17 +1,18 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import HomePage from './pages/Home/HomePage';
-import AddProductPage from './pages/AddProduct/AddProductPage';
-import Navbar from './components/Navbar/Navbar';
-import './styles/global.css';
+import Layout from "./components/Layout/layout"
+import { Routes, Route, Navigate } from "react-router-dom";
+import ProductsPage from "./pages/Products/ProductsPage";
+import OrdersPage from "./pages/Orders/OrdersPage";
 
-export default function App() {
+const App = () => {
   return (
-    <BrowserRouter>
-      <Navbar />
+    <Layout>
       <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/add-product" element={<AddProductPage />} />
+        <Route path="/" element={<Navigate to="/products" replace />} />
+        <Route path="/products" element={<ProductsPage />} />
+        <Route path="/orders" element={<OrdersPage />} />
       </Routes>
-    </BrowserRouter>
+    </Layout>
   );
-}
+};
+
+export default App;
