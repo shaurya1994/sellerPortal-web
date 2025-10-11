@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { productsPageStyles } from "./ProductsPage.styles";
 import { fetchSellerProducts } from "../../api/products";
 import ProductGrid from "../../components/ProductGrid/ProductGrid";
@@ -9,15 +9,15 @@ const ProductsPage = () => {
 
   useEffect(() => {
     const status = active === "my-products" ? "approved" : "pending";
-    const load = async () => {
+    const loadProducts = async () => {
       try {
         const data = await fetchSellerProducts(status);
         setProducts(data.products || []);
-      } catch (err) {
-        console.error("Failed to fetch:", err);
+      } catch (error) {
+        console.error("Error loading products:", error);
       }
     };
-    load();
+    loadProducts();
   }, [active]);
 
   return (
@@ -58,12 +58,12 @@ const ProductsPage = () => {
         </div>
       </div>
 
-      {/* Grid Area */}
-      <div className="mt-4 w-100" style={productsPageStyles.contentArea}>
+      {/* Grid */}
+      <div className="mt-4">
         <ProductGrid
           products={products}
           showAddCard={active === "my-products"}
-          onAddClick={() => console.log("🟢 Add product clicked")}
+          onAddClick={() => console.log("🟢 Add Product clicked")}
         />
       </div>
     </div>
@@ -72,7 +72,81 @@ const ProductsPage = () => {
 
 export default ProductsPage;
 
+// import { useState, useEffect } from "react";
+// import { productsPageStyles } from "./ProductsPage.styles";
+// import { fetchSellerProducts } from "../../api/products";
+// import ProductGrid from "../../components/ProductGrid/ProductGrid";
 
+// const ProductsPage = () => {
+//   const [active, setActive] = useState("my-products");
+//   const [products, setProducts] = useState([]);
+
+//   useEffect(() => {
+//     const status = active === "my-products" ? "approved" : "pending";
+//     const load = async () => {
+//       try {
+//         const data = await fetchSellerProducts(status);
+//         setProducts(data.products || []);
+//       } catch (err) {
+//         console.error("Failed to fetch:", err);
+//       }
+//     };
+//     load();
+//   }, [active]);
+
+//   return (
+//     <div className="container-fluid py-3 px-4">
+//       {/* Tabs */}
+//       <div style={productsPageStyles.tabWrapper}>
+//         <div className="d-flex justify-content-start">
+//           <ul className="nav" style={productsPageStyles.navList}>
+//             <li className="nav-item">
+//               <button
+//                 className="tab-link"
+//                 style={{
+//                   ...productsPageStyles.tabLink,
+//                   ...(active === "my-products"
+//                     ? productsPageStyles.tabActive
+//                     : {}),
+//                 }}
+//                 onClick={() => setActive("my-products")}
+//               >
+//                 My Products
+//               </button>
+//             </li>
+//             <li className="nav-item">
+//               <button
+//                 className="tab-link"
+//                 style={{
+//                   ...productsPageStyles.tabLink,
+//                   ...(active === "pending"
+//                     ? productsPageStyles.tabActive
+//                     : {}),
+//                 }}
+//                 onClick={() => setActive("pending")}
+//               >
+//                 Pending Approval
+//               </button>
+//             </li>
+//           </ul>
+//         </div>
+//       </div>
+
+//       {/* Grid Area */}
+//       <div className="mt-4 w-100" style={productsPageStyles.contentArea}>
+//         <ProductGrid
+//           products={products}
+//           showAddCard={active === "my-products"}
+//           onAddClick={() => console.log("🟢 Add product clicked")}
+//         />
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default ProductsPage;
+
+// Temp
 // import { useState, useEffect } from "react";
 // import { productsPageStyles } from "./ProductsPage.styles";
 // import { fetchSellerProducts } from "../../api/products";
