@@ -4,7 +4,6 @@ import { productsPageStyles } from "./ProductsPage.styles";
 import { fetchSellerProducts } from "../../api/products";
 import ProductGrid from "../../components/ProductGrid/ProductGrid";
 import Pagination from "../../components/Pagination/Pagination";
-import { COLORS } from "../../constants/colors";
 
 const ProductsPage = () => {
   const [products, setProducts] = useState([]);
@@ -61,7 +60,7 @@ const ProductsPage = () => {
   // cardWidth = clamp(CARD_MIN, containerWidth * 0.22, CARD_MAX)
   const cardWidth = Math.max(
     CARD_MIN,
-    Math.min(Math.round(containerWidth * 0.22 || CARD_MAX), CARD_MAX)
+    Math.min(Math.round(containerWidth * 0.18 || CARD_MAX), CARD_MAX)
   );
 
   // ensure cardWidth never exceeds container width (for very small screens)
@@ -107,18 +106,20 @@ const ProductsPage = () => {
           <div style={productsPageStyles.loading}>Loading products…</div>
         ) : (
           <>
-            <ProductGrid
-              products={visibleProducts}
-              showAddCard={true}
-              onAddClick={() => console.log("Add Product clicked")}
-              cardWidth={effectiveCardWidth}
-              gap={GRID_GAP}
-            />
-            {totalItems === 0 && (
-              <div style={productsPageStyles.emptyState}>
-                <p style={productsPageStyles.emptyText}>No products to show</p>
-              </div>
-            )}
+            <div style={{ width: "100%" }}>
+              <ProductGrid
+                products={visibleProducts}
+                showAddCard={true}
+                onAddClick={() => console.log("Add Product clicked")}
+                cardWidth={effectiveCardWidth}
+                gap={GRID_GAP}
+              />
+              {totalItems === 0 && (
+                <div style={productsPageStyles.emptyState}>
+                  <p style={productsPageStyles.emptyText}>No products to show</p>
+                </div>
+              )}
+            </div>
           </>
         )}
       </div>

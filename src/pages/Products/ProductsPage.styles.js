@@ -13,24 +13,26 @@ export const productsPageStyles = {
   // new max-width container for grid + title
   gridContainer: {
     width: "100%",
-    maxWidth: "1400px",
-    margin: "0 auto",
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
+    padding: "0",
+    margin: "0",
+    display: "grid",
+    justifyItems: "start", // keep cards left-aligned
+    alignItems: "start",
+    gap: "1.5rem",
   },
 
   headerRow: {
     width: "100%",
-    maxWidth: "1400px",
     display: "flex",
-    justifyContent: "space-between",
+    justifyContent: "flex-start",  // ✅ Left-align “My Products”
     alignItems: "center",
-    padding: "0 0.5rem",
+    marginBottom: "0.75rem",
+    padding: "0",                 // Match grid start point
   },
 
   headerLeft: {
     flex: "1 1 auto",
+    paddingLeft: "5px"
   },
 
   // ✏️ clean underline with slightly pointed ends
@@ -39,6 +41,7 @@ export const productsPageStyles = {
     display: "inline-block",
     paddingBottom: "6px",
   },
+
   title: {
     margin: 0,
     fontSize: "1.35rem",
@@ -47,6 +50,7 @@ export const productsPageStyles = {
     lineHeight: 1.15,
     position: "relative",
   },
+
   titleUnderline: {
     content: "''",
     position: "absolute",
@@ -87,11 +91,13 @@ export const productsPageStyles = {
     fontSize: "0.95rem",
     transition: "all 0.15s ease",
   },
+
   paginationBtnActive: {
     background: COLORS.primary,
     color: "#fff",
     borderColor: COLORS.primary,
   },
+
   paginationBtnDisabled: {
     opacity: 0.45,
     cursor: "not-allowed",

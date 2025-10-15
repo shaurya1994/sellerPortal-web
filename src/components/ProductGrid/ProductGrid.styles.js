@@ -2,15 +2,21 @@
 import { COLORS } from "../../constants/colors";
 
 export const gridStyles = {
+  
   gridWrapper: {
     display: "flex",
     flexWrap: "wrap",
-    justifyContent: "flex-start",
+    justifyContent: "flex-start", // left-align all rows
     alignItems: "flex-start",
-    // gap set dynamically from parent (can't use dynamic in JS-only object here)
+    gap: "1.5rem",
+    width: "100%",                // fill full container width
+    margin: "0",                  // remove auto-centering
+    maxWidth: "100%",             // prevent accidental width capping
+    boxSizing: "border-box",
+    paddingLeft: "0",             // ensure no internal offset
+    paddingRight: "0",
   },
 
-  // Product Card base (cards themselves remain flexible inside wrapper)
   productCard: {
     backgroundColor: COLORS.card,
     borderRadius: "12px",
@@ -18,13 +24,14 @@ export const gridStyles = {
     border: `2px solid transparent`,
     overflow: "hidden",
     transition: "border 0.25s ease, transform 0.25s ease",
-    height: "295px",
-    width: "100%", // wrapper controls the actual width
+    height: "auto", // ✅ was fixed 295px
+    width: "100%",
     cursor: "pointer",
     display: "flex",
     flexDirection: "column",
-    justifyContent: "space-between",
+    justifyContent: "flex-start", // ✅ align content naturally
   },
+
   productCardHover: {
     border: `2px solid ${COLORS.primary}`,
     transform: "translateY(-3px)",
@@ -42,8 +49,8 @@ export const gridStyles = {
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
-    padding: "0 12px",
-    height: "75px",
+    padding: "10px 12px 12px 12px", // ✅ reduce bottom padding
+    minHeight: "68px",              // ✅ consistent height
   },
 
   productName: {

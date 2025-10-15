@@ -12,7 +12,7 @@ const ProductGridCard = ({ product, cardWidth = 320 }) => {
   const imageList = hasImages ? photos : [{ photo_url: null }];
 
   // derive image height using an aspect ratio so it scales with card width
-  const imageHeight = Math.round(cardWidth * 0.68); // 68% height ratio -> looks close to previous 220px for 320px width
+  const imageHeight = Math.round(cardWidth * 0.65); // 65% height ratio
 
   return (
     <div
