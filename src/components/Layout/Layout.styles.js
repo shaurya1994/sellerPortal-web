@@ -1,3 +1,4 @@
+// FILE: LayoutStyles.jsx
 import { COLORS } from "../../constants/colors";
 
 export const layoutStyles = {

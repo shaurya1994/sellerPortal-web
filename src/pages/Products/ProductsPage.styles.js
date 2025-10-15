@@ -1,36 +1,112 @@
+// FILE: ProductsPage.styles.js
 import { COLORS } from "../../constants/colors";
 
 export const productsPageStyles = {
-  tabWrapper: {
-    paddingBottom: "0.25rem",
-  },
-  navList: {
-    listStyle: "none",
-    paddingLeft: 0,
-    marginBottom: 0,
-    display: "flex",
-    gap: "2rem",
-  },
-  tabLink: {
-    background: "none",
-    border: "none",
-    color: COLORS.textLight,
-    fontSize: "1.05rem",
-    fontWeight: 500,
-    padding: "10px 0",
-    cursor: "pointer",
-    borderBottom: `2px solid transparent`,
-    transition: "all 0.2s ease",
-  },
-  tabActive: {
-    color: COLORS.primary,
-    borderBottom: `2px solid ${COLORS.primary}`,
-    fontWeight: 600,
-  },
-  contentArea: {
-    backgroundColor: COLORS.background,
-    borderRadius: "8px",
-    minHeight: "70vh",
+  container: {
     width: "100%",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center", // centers inner content
+    gap: "1.25rem",
+  },
+
+  // new max-width container for grid + title
+  gridContainer: {
+    width: "100%",
+    maxWidth: "1400px",
+    margin: "0 auto",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+  },
+
+  headerRow: {
+    width: "100%",
+    maxWidth: "1400px",
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    padding: "0 0.5rem",
+  },
+
+  headerLeft: {
+    flex: "1 1 auto",
+  },
+
+  // ✏️ clean underline with slightly pointed ends
+  titleWrapper: {
+    position: "relative",
+    display: "inline-block",
+    paddingBottom: "6px",
+  },
+  title: {
+    margin: 0,
+    fontSize: "1.35rem",
+    fontWeight: 700,
+    color: COLORS.text,
+    lineHeight: 1.15,
+    position: "relative",
+  },
+  titleUnderline: {
+    content: "''",
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    width: "100%",
+    height: "2px",
+    background: `linear-gradient(90deg, transparent 0%, ${COLORS.primary} 15%, ${COLORS.primary} 85%, transparent 100%)`,
+    borderRadius: "2px",
+  },
+
+  paginationRow: {
+    width: "100%",
+    display: "flex",
+    justifyContent: "center",
+    marginTop: "1rem",
+    marginBottom: "0.5rem",
+  },
+
+  paginationContainer: {
+    display: "flex",
+    flexWrap: "wrap",
+    justifyContent: "center",
+    gap: "0.35rem",
+    alignItems: "center",
+    maxWidth: "90vw",
+  },
+
+  paginationBtn: {
+    minWidth: "38px",
+    padding: "7px 10px",
+    borderRadius: "8px",
+    border: `1px solid ${COLORS.border}`,
+    background: "transparent",
+    color: COLORS.text,
+    cursor: "pointer",
+    fontWeight: 600,
+    fontSize: "0.95rem",
+    transition: "all 0.15s ease",
+  },
+  paginationBtnActive: {
+    background: COLORS.primary,
+    color: "#fff",
+    borderColor: COLORS.primary,
+  },
+  paginationBtnDisabled: {
+    opacity: 0.45,
+    cursor: "not-allowed",
+  },
+
+  // small-screen adjustments
+  "@media (max-width: 768px)": {
+    paginationBtn: {
+      minWidth: "32px",
+      padding: "6px 8px",
+      fontSize: "0.85rem",
+      borderRadius: "6px",
+    },
+    title: {
+      fontSize: "1.15rem",
+    },
   },
 };

@@ -1,3 +1,4 @@
+// FILE: Layout.jsx
 import Header from "./Header";
 import Footer from "./Footer";
 import { layoutStyles } from "./Layout.styles";
