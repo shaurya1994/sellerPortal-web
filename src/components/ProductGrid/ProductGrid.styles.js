@@ -17,6 +17,48 @@ export const gridStyles = {
     paddingRight: "0",
   },
 
+  // Add Card
+  addCard: {
+    backgroundColor: COLORS.card,
+    borderRadius: "12px",
+    border: `2px solid transparent`,
+    height: "295px",
+    width: "100%",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    cursor: "pointer",
+    transition: "border 0.2s ease, transform 0.2s ease",
+    boxShadow: "0 3px 10px rgba(0,0,0,0.08)",
+    position: "relative",
+  },
+
+  addBox: {
+    width: "84px",
+    height: "84px",
+    borderRadius: "18px",
+    border: `2px dashed ${COLORS.border}`,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    fontSize: "48px",
+    color: COLORS.textLight,
+    lineHeight: 1,
+    transition: "all 0.2s ease",
+  },
+
+  addText: {
+    fontWeight: 600,
+    color: COLORS.text,
+    textAlign: "center",
+    margin: 0,
+    position: "absolute",
+    bottom: "44px",
+    left: 0,
+    right: 0,
+  },
+
   productCard: {
     backgroundColor: COLORS.card,
     borderRadius: "12px",
@@ -74,51 +116,12 @@ export const gridStyles = {
     cursor: "pointer",
     transition: "all 0.2s ease",
   },
+
   viewBtnHover: {
     backgroundColor: `${COLORS.primary}22`,
   },
 
-  // Add Card
-  addCard: {
-    backgroundColor: COLORS.card,
-    borderRadius: "12px",
-    border: `2px solid transparent`,
-    height: "295px",
-    width: "100%",
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
-    cursor: "pointer",
-    transition: "border 0.2s ease, transform 0.2s ease",
-    boxShadow: "0 3px 10px rgba(0,0,0,0.08)",
-    position: "relative",
-  },
-  addBox: {
-    width: "84px",
-    height: "84px",
-    borderRadius: "18px",
-    border: `2px dashed ${COLORS.border}`,
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    fontSize: "48px",
-    color: COLORS.textLight,
-    lineHeight: 1,
-    transition: "all 0.2s ease",
-  },
-  addText: {
-    fontWeight: 600,
-    color: COLORS.text,
-    textAlign: "center",
-    margin: 0,
-    position: "absolute",
-    bottom: "44px",
-    left: 0,
-    right: 0,
-  },
-
-  // carousel buttons + indicators use same names as before
+  // Csarousel buttons
   carouselPrevBtn: {
     width: "55px",
     height: "42px",
@@ -132,7 +135,12 @@ export const gridStyles = {
     justifyContent: "center",
     zIndex: 10,
     pointerEvents: "auto",
+    cursor: "pointer",
+    transition: "background-color 0.2s ease",
+    userSelect: "none",
+    outline: "none",
   },
+
   carouselNextBtn: {
     width: "55px",
     height: "42px",
@@ -146,7 +154,23 @@ export const gridStyles = {
     justifyContent: "center",
     zIndex: 10,
     pointerEvents: "auto",
+    cursor: "pointer",
+    transition: "background-color 0.2s ease",
+    userSelect: "none",
+    outline: "none",
   },
+
+  carouselPrevBtnHover: {
+    backgroundColor: "rgba(127,140,141,0.9)",
+  },
+  carouselNextBtnHover: {
+    backgroundColor: "rgba(127,140,141,0.9)",
+  },
+  carouselBtnActiveFix: {
+    backgroundColor: "rgba(127,140,141,0.7)", // reset shade after click
+  },
+
+
   carouselArrowIcon: {
     filter: "invert(1)",
     backgroundSize: "60%",
@@ -155,7 +179,7 @@ export const gridStyles = {
 
   carouselIndicators: {
     position: "absolute",
-    bottom: "5px",
+    bottom: "15px",
     left: "50%",
     transform: "translateX(-50%)",
     display: "flex",

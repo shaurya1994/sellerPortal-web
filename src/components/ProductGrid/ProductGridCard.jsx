@@ -1,18 +1,37 @@
 // FILE: ProductGridCard.jsx
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { gridStyles } from "./ProductGrid.styles";
 import { COLORS } from "../../constants/colors";
 
 const ProductGridCard = ({ product, cardWidth = 320 }) => {
   const [hovered, setHovered] = useState(false);
   const [btnHover, setBtnHover] = useState(false);
+  const [hoveredPrev, setHoveredPrev] = useState(false);
+  const [hoveredNext, setHoveredNext] = useState(false);
+  const [activeIndex, setActiveIndex] = useState(0);
+
   const { name, photos = [] } = product;
   const hasImages = photos.length > 0;
   const multipleImages = photos.length > 1;
   const imageList = hasImages ? photos : [{ photo_url: null }];
+  const imageHeight = Math.round(cardWidth * 0.65);
 
-  // derive image height using an aspect ratio so it scales with card width
-  const imageHeight = Math.round(cardWidth * 0.65); // 65% height ratio
+  // ✅ Track slide change for active indicator
+  useEffect(() => {
+    if (!multipleImages) return;
+    const carouselEl = document.getElementById(`carousel-${product.product_id}`);
+    if (!carouselEl) return;
+
+    const handleSlide = (e) => setActiveIndex(e.to);
+    carouselEl.addEventListener("slid.bs.carousel", handleSlide);
+
+    // ✅ speed up transition
+    carouselEl.querySelectorAll(".carousel-item").forEach((item) => {
+      item.style.transition = "transform 0.35s ease-in-out"; // default ~0.6s → faster
+    });
+
+    return () => carouselEl.removeEventListener("slid.bs.carousel", handleSlide);
+  }, [multipleImages, product.product_id]);
 
   return (
     <div
@@ -29,8 +48,9 @@ const ProductGridCard = ({ product, cardWidth = 320 }) => {
       <div
         id={`carousel-${product.product_id}`}
         className="carousel slide"
-        data-bs-ride="carousel"
+        data-bs-ride="false"
         data-bs-interval="false"
+        data-bs-pause="false"
         style={{ position: "relative" }}
       >
         {multipleImages && (
@@ -39,6 +59,7 @@ const ProductGridCard = ({ product, cardWidth = 320 }) => {
               <button
                 key={i}
                 type="button"
+                onClick={(e) => e.preventDefault()} // disable click
                 data-bs-target={`#carousel-${product.product_id}`}
                 data-bs-slide-to={i}
                 className={i === 0 ? "active" : ""}
@@ -46,9 +67,11 @@ const ProductGridCard = ({ product, cardWidth = 320 }) => {
                 style={{
                   width: "20px",
                   height: "4px",
-                  backgroundColor: i === 0 ? COLORS.primary : COLORS.textLight,
+                  backgroundColor:
+                    i === activeIndex ? COLORS.primary : COLORS.textLight,
                   border: "none",
                   borderRadius: "2px",
+                  cursor: "default", // ✅ disable hand cursor
                 }}
               />
             ))}
@@ -71,7 +94,12 @@ const ProductGridCard = ({ product, cardWidth = 320 }) => {
                   }}
                 />
               ) : (
-                <div style={{ ...gridStyles.placeholderBox, height: `${imageHeight}px` }}>
+                <div
+                  style={{
+                    ...gridStyles.placeholderBox,
+                    height: `${imageHeight}px`,
+                  }}
+                >
                   <span>No Image Available</span>
                 </div>
               )}
@@ -86,7 +114,13 @@ const ProductGridCard = ({ product, cardWidth = 320 }) => {
               type="button"
               data-bs-target={`#carousel-${product.product_id}`}
               data-bs-slide="prev"
-              style={gridStyles.carouselPrevBtn}
+              style={{
+                ...gridStyles.carouselPrevBtn,
+                ...(hoveredPrev ? gridStyles.carouselPrevBtnHover : {}),
+              }}
+              onMouseEnter={() => setHoveredPrev(true)}
+              onMouseLeave={() => setHoveredPrev(false)}
+              onMouseDown={(e) => e.currentTarget.blur()}
               aria-label="Previous image"
             >
               <span
@@ -95,12 +129,19 @@ const ProductGridCard = ({ product, cardWidth = 320 }) => {
                 style={gridStyles.carouselArrowIcon}
               />
             </button>
+
             <button
               className="carousel-control-next"
               type="button"
               data-bs-target={`#carousel-${product.product_id}`}
               data-bs-slide="next"
-              style={gridStyles.carouselNextBtn}
+              style={{
+                ...gridStyles.carouselNextBtn,
+                ...(hoveredNext ? gridStyles.carouselNextBtnHover : {}),
+              }}
+              onMouseEnter={() => setHoveredNext(true)}
+              onMouseLeave={() => setHoveredNext(false)}
+              onMouseDown={(e) => e.currentTarget.blur()}
               aria-label="Next image"
             >
               <span
