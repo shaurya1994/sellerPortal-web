@@ -1,19 +1,25 @@
 // FILE: ProductAddModal.jsx
-import { useState, useEffect, useRef, memo } from "react";
 import { Modal } from "bootstrap";
+import { useState, useEffect, useRef, memo } from "react";
+
+import { CATEGORY_MAP } from "../../constants/categoryMap";
 import { productAddModalStyles as styles } from "./ProductAddModal.styles";
-import { CATEGORY_MAP } from "../../constants/categoryMap"; // ✅ import category map
+
+const MAX_PHOTOS = 3;
 
 const ProductAddModal = memo(({ show, onClose, onSubmit }) => {
   const modalRef = useRef(null);
+  const [hoveredIndex, setHoveredIndex] = useState(null);
+
   const [formState, setFormState] = useState({
     name: "",
     category_id: "",
     photos: [],
     variants: [{ size: "", weight: "" }],
+    weightUnit: "GM",
   });
 
-  // Bootstrap modal setup
+  // Initialize modal
   useEffect(() => {
     const modalEl = modalRef.current;
     if (!modalEl) return;
@@ -23,39 +29,60 @@ const ProductAddModal = memo(({ show, onClose, onSubmit }) => {
     });
     const handleHidden = () => {
       onClose && onClose();
-      setFormState({
-        name: "",
-        category_id: "",
-        photos: [],
-        variants: [{ size: "", weight: "" }],
-      });
+      resetForm();
     };
     modalEl.addEventListener("hidden.bs.modal", handleHidden);
     return () => modalEl.removeEventListener("hidden.bs.modal", handleHidden);
   }, [onClose]);
 
   useEffect(() => {
-    const modalEl = modalRef.current;
-    if (!modalEl) return;
-    const modal = Modal.getOrCreateInstance(modalEl);
+    const modal = Modal.getOrCreateInstance(modalRef.current);
     show ? modal.show() : modal.hide();
   }, [show]);
 
-  // Input changes
+  const resetForm = () => {
+    setFormState({
+      name: "",
+      category_id: "",
+      photos: [],
+      variants: [{ size: "", weight: "" }],
+      weightUnit: "GM",
+    });
+  };
+
+  // Text input changes
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormState((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Photo selection
-  const handlePhotoChange = (e) => {
-    const files = Array.from(e.target.files);
+  // New toggle buttons for weight unit
+  const handleUnitSelect = (unit) => {
     setFormState((prev) => ({
       ...prev,
-      photos: files.slice(0, 3), // ✅ limit to 3
+      weightUnit: unit,
+      variants: prev.variants.map((v) => ({
+        ...v,
+        weight: v.weight ? v.weight.replace(/(GM|KG)$/i, unit) : "",
+      })),
+    }));
+  };
+  
+  // 
+  const handlePhotoChange = (e) => {
+    const files = Array.from(e.target.files);
+    if (files.length + formState.photos.length > MAX_PHOTOS) {
+      window.alert(`You can upload a maximum of ${MAX_PHOTOS} photos.`);
+      e.target.value = "";
+      return;
+    }
+    setFormState((prev) => ({
+      ...prev,
+      photos: [...prev.photos, ...files].slice(0, MAX_PHOTOS),
     }));
   };
 
+  // 
   const removePhoto = (index) => {
     setFormState((prev) => ({
       ...prev,
@@ -63,22 +90,61 @@ const ProductAddModal = memo(({ show, onClose, onSubmit }) => {
     }));
   };
 
-  // Variant logic
+  // Variant input handling
   const handleVariantChange = (index, field, value) => {
     setFormState((prev) => {
       const newVariants = [...prev.variants];
-      newVariants[index] = { ...newVariants[index], [field]: value };
+      let formatted = value;
+
+      if (field === "size") {
+        const cleanValue = value.trim();
+
+        // Only format on blur or when fully numeric on submit, not while typing
+        newVariants[index] = { ...newVariants[index], [field]: cleanValue };
+      }
+
+
+      if (field === "weight" && value.trim()) {
+        formatted = `${value}${prev.weightUnit}`;
+      }
+
+      newVariants[index] = { ...newVariants[index], [field]: formatted };
       return { ...prev, variants: newVariants };
     });
   };
 
+  // Handles MM formatting after user finishes typing
+  const handleSizeBlur = (index) => {
+    setFormState((prev) => {
+      const newVariants = [...prev.variants];
+      const sizeValue = newVariants[index].size?.trim() || "";
+
+      // Check if purely numeric
+      const numeric = /^[0-9]+$/.test(sizeValue);
+
+      // Add space + MM if numeric and not already present
+      if (numeric && !sizeValue.toUpperCase().includes("MM")) {
+        newVariants[index].size = `${sizeValue} MM`;
+      }
+
+      return { ...prev, variants: newVariants };
+    });
+  };
+
+  // 
   const addVariantRow = () => {
+    const last = formState.variants[formState.variants.length - 1];
+    if (!last.size && !last.weight) {
+      window.alert("Please fill in the current variant before adding another.");
+      return;
+    }
     setFormState((prev) => ({
       ...prev,
       variants: [...prev.variants, { size: "", weight: "" }],
     }));
   };
 
+  // 
   const removeVariantRow = (index) => {
     setFormState((prev) => ({
       ...prev,
@@ -86,12 +152,30 @@ const ProductAddModal = memo(({ show, onClose, onSubmit }) => {
     }));
   };
 
-  // Submit handler
+  // 
+  const validateForm = () => {
+    if (!formState.name.trim() || !formState.category_id) {
+      window.alert("Product name and category are required.");
+      return false;
+    }
+    const invalidVariant = formState.variants.some(
+      (v) => !v.size && !v.weight
+    );
+    if (invalidVariant) {
+      window.alert("Each variant must have at least size or weight filled.");
+      return false;
+    }
+    return true;
+  };
+
+  // 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!validateForm()) return;
+
     const payload = new FormData();
     payload.append("name", formState.name);
-    payload.append("category_id", formState.category_id); // ✅ correct ID value
+    payload.append("category_id", formState.category_id);
     formState.photos.forEach((file) => payload.append("photos", file));
     payload.append("variants", JSON.stringify(formState.variants));
 
@@ -101,14 +185,13 @@ const ProductAddModal = memo(({ show, onClose, onSubmit }) => {
         body: payload,
       });
       const result = await resp.json();
-
       if (resp.ok) {
         onSubmit && onSubmit(result);
       } else {
-        console.error("Add product failed", result);
+        window.alert(result?.message || "Failed to add product.");
       }
     } catch (err) {
-      console.error("Network error", err);
+      window.alert("Network error. Please try again.");
     }
   };
 
@@ -123,27 +206,17 @@ const ProductAddModal = memo(({ show, onClose, onSubmit }) => {
       <div className="modal-dialog modal-lg modal-dialog-centered">
         <div className="modal-content" style={styles.modalContent}>
           <div className="modal-header">
-            <h5
-              className="modal-title"
-              id="productAddModalLabel"
-              style={styles.title}
-            >
+            <h5 className="modal-title" id="productAddModalLabel" style={styles.title}>
               Add New Product
             </h5>
-            <button
-              type="button"
-              className="btn-close"
-              data-bs-dismiss="modal"
-              aria-label="Close"
-            />
+            <button type="button" className="btn-close" data-bs-dismiss="modal" />
           </div>
 
           <div className="modal-body" style={styles.modalBody}>
             <form onSubmit={handleSubmit} style={styles.form}>
-              {/* ✅ Product Name */}
+              {/* Product Name */}
               <div style={styles.formGroup}>
-                <label htmlFor="name" style={styles.label}>
-                  Product Name
+                <label htmlFor="name" style={styles.label}>Product Name
                 </label>
                 <input
                   type="text"
@@ -156,72 +229,113 @@ const ProductAddModal = memo(({ show, onClose, onSubmit }) => {
                 />
               </div>
 
-              {/* ✅ Category - Dynamic from CATEGORY_MAP */}
+              {/* Category */}
               <div style={styles.formGroup}>
-                <label htmlFor="category_id" style={styles.label}>
-                  Category
+                <label htmlFor="category_id" style={styles.label}>Category
                 </label>
-                <select
-                  id="category_id"
-                  name="category_id"
-                  value={formState.category_id}
-                  onChange={handleInputChange}
-                  style={styles.input}
-                  required
-                >
-                  <option value="">Select Category</option>
-                  {Object.entries(CATEGORY_MAP).map(([id, label]) => (
-                    <option key={id} value={id}>
-                      {label}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {/* ✅ Photos (max 3) */}
-              <div style={styles.formGroup}>
-                <label htmlFor="photos" style={styles.label}>
-                  Upload Photos (up to 3)
-                </label>
-                <input
-                  type="file"
-                  id="photos"
-                  name="photos"
-                  accept="image/*"
-                  multiple
-                  onChange={handlePhotoChange}
-                  style={styles.input}
-                />
-                {formState.photos.length > 0 && (
-                  <ul style={styles.photoPreviewList}>
-                    {formState.photos.map((file, idx) => (
-                      <li key={idx} style={styles.photoPreviewItem}>
-                        {file.name}
-                        <button
-                          type="button"
-                          onClick={() => removePhoto(idx)}
-                          style={styles.photoRemoveBtn}
-                        >
-                          ×
-                        </button>
-                      </li>
+                <div style={styles.customSelectWrapper}>
+                  <select
+                    id="category_id"
+                    name="category_id"
+                    value={formState.category_id}
+                    onChange={handleInputChange}
+                    style={styles.customSelect}
+                    required
+                  >
+                    <option value="">Select Category</option>
+                    {Object.entries(CATEGORY_MAP).map(([id, label]) => (
+                      <option key={id} value={id}>{label}</option>
                     ))}
-                  </ul>
-                )}
+                  </select>
+                  <span style={styles.dropdownArrow}>▼</span>
+                </div>
               </div>
 
-              {/* ✅ Variants */}
+              {/* Photos */}
               <div style={styles.formGroup}>
-                <label style={styles.label}>Variants</label>
+                <label style={styles.label}>Upload Photos (Maximum 3)
+                </label>
+                <div style={styles.photoRow}>
+                  <label htmlFor="photos" style={styles.browseButton}>
+                    Browse…
+                    <input
+                      type="file"
+                      id="photos"
+                      name="photos"
+                      accept="image/*"
+                      multiple
+                      onChange={handlePhotoChange}
+                      style={styles.hiddenInput}
+                    />
+                  </label>
+                  {formState.photos.length > 0 && (
+                    <div style={styles.photoGridInline}>
+                      {formState.photos.map((file, idx) => (
+                        <div
+                          key={idx}
+                          style={{
+                            ...styles.photoBox,
+                            ...(hoveredIndex === idx ? styles.photoBoxHover : {}),
+                          }}
+                          onMouseEnter={() => setHoveredIndex(idx)}
+                          onMouseLeave={() => setHoveredIndex(null)}
+                        >
+                          <img
+                            src={URL.createObjectURL(file)}
+                            alt="Preview"
+                            style={styles.photoThumb}
+                          />
+                          <button
+                            type="button"
+                            onClick={() => removePhoto(idx)}
+                            style={styles.photoRemoveCross}
+                          >
+                            ×
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Variants */}
+              <div style={styles.formGroup}>
+                <div style={styles.variantHeaderRow}>
+                  <label style={styles.label}>Variants
+                  </label>
+                  <span style={styles.noteText}>
+                    Keep size as <b>‘Regular’</b> if there is only one size
+                  </span>
+
+                  {/* ✅ Toggle buttons */}
+                  <div style={styles.unitToggleContainer}>
+                    {["GM", "KG"].map((unit) => (
+                      <button
+                        type="button"
+                        key={unit}
+                        onClick={() => handleUnitSelect(unit)}
+                        style={{
+                          ...styles.unitToggleButton,
+                          ...(formState.weightUnit === unit
+                            ? styles.unitToggleActive
+                            : {}),
+                        }}
+                      >
+                        {unit}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
                 {formState.variants.map((variant, idx) => (
                   <div key={idx} style={styles.variantRow}>
                     <input
                       type="text"
                       placeholder="Size"
                       value={variant.size}
-                      onChange={(e) =>
-                        handleVariantChange(idx, "size", e.target.value)
-                      }
+                      onChange={(e) => handleVariantChange(idx, "size", e.target.value)}
+                      onBlur={() => handleSizeBlur(idx)}
                       style={styles.variantInput}
                     />
                     <input
@@ -244,19 +358,20 @@ const ProductAddModal = memo(({ show, onClose, onSubmit }) => {
                     )}
                   </div>
                 ))}
+
                 <button
                   type="button"
                   onClick={addVariantRow}
                   style={styles.addVariantBtn}
                 >
-                  Add Variant
+                  + Add Variant
                 </button>
               </div>
 
-              {/* ✅ Submit */}
+              {/* Submit */}
               <div style={styles.formGroup}>
                 <button type="submit" style={styles.submitBtn}>
-                  Submit
+                  Submit Product
                 </button>
               </div>
             </form>
@@ -268,284 +383,3 @@ const ProductAddModal = memo(({ show, onClose, onSubmit }) => {
 });
 
 export default ProductAddModal;
-
-// // FILE: ProductAddModal.jsx
-// import { useState, useEffect, useRef, memo } from "react";
-// import { Modal } from "bootstrap";
-// import { productAddModalStyles as styles } from "./ProductAddModal.styles";
-
-// const ProductAddModal = memo(({ show, onClose, onSubmit }) => {
-//   const modalRef = useRef(null);
-//   const [formState, setFormState] = useState({
-//     name: "",
-//     category_id: "",
-//     photos: [],             // array of File objects or URL placeholders
-//     variants: [             // initial one variant row
-//       { size: "", weight: "" }
-//     ]
-//   });
-
-//   // Bootstrap modal instance
-//   useEffect(() => {
-//     const modalEl = modalRef.current;
-//     if (!modalEl) return;
-//     const modal = Modal.getOrCreateInstance(modalEl, {
-//       backdrop: true,
-//       keyboard: true,
-//     });
-//     const handleHidden = () => {
-//       // Clear/reset form when hidden
-//       onClose && onClose();
-//       setFormState({
-//         name: "",
-//         category_id: "",
-//         photos: [],
-//         variants: [{ size: "", weight: "" }]
-//       });
-//     };
-//     modalEl.addEventListener("hidden.bs.modal", handleHidden);
-//     return () => {
-//       modalEl.removeEventListener("hidden.bs.modal", handleHidden);
-//     };
-//   }, [onClose]);
-
-//   useEffect(() => {
-//     const modalEl = modalRef.current;
-//     if (!modalEl) return;
-//     const modal = Modal.getOrCreateInstance(modalEl);
-//     show ? modal.show() : modal.hide();
-//   }, [show]);
-
-//   // Handle input changes
-//   const handleInputChange = (e) => {
-//     const { name, value } = e.target;
-//     setFormState(prev => ({
-//       ...prev,
-//       [name]: value
-//     }));
-//   };
-
-//   // Handle photo selection
-//   const handlePhotoChange = (e) => {
-//     const files = Array.from(e.target.files);
-//     // limit to 3
-//     const allowed = files.slice(0, 3);
-//     setFormState(prev => ({
-//       ...prev,
-//       photos: allowed
-//     }));
-//   };
-
-//   // Remove photo by index
-//   const removePhoto = (index) => {
-//     setFormState(prev => ({
-//       ...prev,
-//       photos: prev.photos.filter((_, i) => i !== index)
-//     }));
-//   };
-
-//   // Handle variant row change
-//   const handleVariantChange = (index, field, value) => {
-//     setFormState(prev => {
-//       const newVariants = [...prev.variants];
-//       newVariants[index] = {
-//         ...newVariants[index],
-//         [field]: value
-//       };
-//       return { ...prev, variants: newVariants };
-//     });
-//   };
-
-//   // Add a new variant row
-//   const addVariantRow = () => {
-//     setFormState(prev => ({
-//       ...prev,
-//       variants: [...prev.variants, { size: "", weight: "" }]
-//     }));
-//   };
-
-//   // Remove variant row (if more than one)
-//   const removeVariantRow = (index) => {
-//     setFormState(prev => ({
-//       ...prev,
-//       variants: prev.variants.filter((_, i) => i !== index)
-//     }));
-//   };
-
-//   // Submit handler
-//   const handleSubmit = async (e) => {
-//     e.preventDefault();
-//     // prepare form data for POST
-//     const payload = new FormData();
-//     payload.append("name", formState.name);
-//     payload.append("category_id", formState.category_id);
-//     formState.photos.forEach((file, idx) => {
-//       payload.append("photos", file);
-//     });
-//     // Append variants JSON
-//     payload.append("variants", JSON.stringify(formState.variants));
-
-//     try {
-//       const resp = await fetch("http://localhost:5000/seller/add-product", {
-//         method: "POST",
-//         body: payload
-//       });
-//       const result = await resp.json();
-//       if (resp.ok) {
-//         onSubmit && onSubmit(result);
-//       } else {
-//         console.error("Add product failed", result);
-//         // handle error UI
-//       }
-//     } catch (err) {
-//       console.error("Network error", err);
-//       // handle error UI
-//     }
-//   };
-
-//   return (
-//     <div
-//       className="modal fade"
-//       ref={modalRef}
-//       tabIndex="-1"
-//       aria-labelledby="productAddModalLabel"
-//       aria-hidden="true"
-//     >
-//       <div className="modal-dialog modal-lg modal-dialog-centered">
-//         <div className="modal-content" style={styles.modalContent}>
-//           <div className="modal-header">
-//             <h5
-//               className="modal-title"
-//               id="productAddModalLabel"
-//               style={styles.title}
-//             >
-//               Add New Product
-//             </h5>
-//             <button
-//               type="button"
-//               className="btn-close"
-//               data-bs-dismiss="modal"
-//               aria-label="Close"
-//             />
-//           </div>
-//           <div className="modal-body" style={styles.modalBody}>
-//             <form onSubmit={handleSubmit} style={styles.form}>
-//               {/* Name */}
-//               <div style={styles.formGroup}>
-//                 <label htmlFor="name" style={styles.label}>Product Name</label>
-//                 <input
-//                   type="text"
-//                   id="name"
-//                   name="name"
-//                   value={formState.name}
-//                   onChange={handleInputChange}
-//                   style={styles.input}
-//                   required
-//                 />
-//               </div>
-
-//               {/* Category */}
-//               <div style={styles.formGroup}>
-//                 <label htmlFor="category_id" style={styles.label}>Category</label>
-//                 <select
-//                   id="category_id"
-//                   name="category_id"
-//                   value={formState.category_id}
-//                   onChange={handleInputChange}
-//                   style={styles.input}
-//                   required
-//                 >
-//                   <option value="">Select Category</option>
-//                   {/* You would map your category constants here */}
-//                   <option value="1">Mortise Lock</option>
-//                   <option value="2">Main Door Handle</option>
-//                   {/* … all categories */}
-//                 </select>
-//               </div>
-
-//               {/* Photos */}
-//               <div style={styles.formGroup}>
-//                 <label htmlFor="photos" style={styles.label}>
-//                   Upload Photos (up to 3)
-//                 </label>
-//                 <input
-//                   type="file"
-//                   id="photos"
-//                   name="photos"
-//                   accept="image/*"
-//                   multiple
-//                   onChange={handlePhotoChange}
-//                   style={styles.input}
-//                 />
-//                 {formState.photos.length > 0 && (
-//                   <ul style={styles.photoPreviewList}>
-//                     {formState.photos.map((file, idx) => (
-//                       <li key={idx} style={styles.photoPreviewItem}>
-//                         {file.name}
-//                         <button
-//                           type="button"
-//                           onClick={() => removePhoto(idx)}
-//                           style={styles.photoRemoveBtn}
-//                         >
-//                           ×
-//                         </button>
-//                       </li>
-//                     ))}
-//                   </ul>
-//                 )}
-//               </div>
-
-//               {/* Variants */}
-//               <div style={styles.formGroup}>
-//                 <label style={styles.label}>Variants</label>
-//                 {formState.variants.map((variant, idx) => (
-//                   <div key={idx} style={styles.variantRow}>
-//                     <input
-//                       type="text"
-//                       placeholder="Size"
-//                       value={variant.size}
-//                       onChange={(e) => handleVariantChange(idx, "size", e.target.value)}
-//                       style={styles.variantInput}
-//                     />
-//                     <input
-//                       type="text"
-//                       placeholder="Weight"
-//                       value={variant.weight}
-//                       onChange={(e) => handleVariantChange(idx, "weight", e.target.value)}
-//                       style={styles.variantInput}
-//                     />
-//                     {formState.variants.length > 1 && (
-//                       <button
-//                         type="button"
-//                         onClick={() => removeVariantRow(idx)}
-//                         style={styles.variantRemoveBtn}
-//                       >
-//                         Remove
-//                       </button>
-//                     )}
-//                   </div>
-//                 ))}
-//                 <button
-//                   type="button"
-//                   onClick={addVariantRow}
-//                   style={styles.addVariantBtn}
-//                 >
-//                   Add Variant
-//                 </button>
-//               </div>
-
-//               {/* Submit */}
-//               <div style={styles.formGroup}>
-//                 <button type="submit" style={styles.submitBtn}>
-//                   Submit
-//                 </button>
-//               </div>
-//             </form>
-//           </div>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// });
-
-// export default ProductAddModal;
