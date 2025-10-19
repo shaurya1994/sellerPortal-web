@@ -1,3 +1,4 @@
+// FILE: src/api/axios.js
 import axios from "axios";
 
 const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
@@ -15,3 +16,42 @@ const api = axios.create({
 });
 
 export default api;
+
+// FILE: src/api/axios.js
+// import axios from "axios";
+
+// const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+
+// // Retrieve JWT dynamically (from localStorage, sessionStorage, etc.)
+// const getToken = () => {
+//   return localStorage.getItem("token") || sessionStorage.getItem("token");
+// };
+
+// // Create Axios instance
+// const api = axios.create({
+//   baseURL: BASE_URL,
+//   withCredentials: false, // change to true if your backend uses cookies
+// });
+
+// // Interceptor to attach token for every request
+// api.interceptors.request.use(
+//   (config) => {
+//     const token = getToken();
+
+//     if (token) {
+//       config.headers.Authorization = `Bearer ${token}`;
+//     } else {
+//       delete config.headers.Authorization;
+//     }
+
+//     // ❗ Don’t force "application/json" on multipart uploads
+//     if (!(config.data instanceof FormData)) {
+//       config.headers["Content-Type"] = "application/json";
+//     }
+
+//     return config;
+//   },
+//   (error) => Promise.reject(error)
+// );
+
+// export default api;

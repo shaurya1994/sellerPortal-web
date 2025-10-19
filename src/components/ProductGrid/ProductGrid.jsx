@@ -84,7 +84,7 @@
 import { useState, useEffect } from "react";
 import AddProductCard from "./AddProductCard";
 import ProductGridCard from "./ProductGridCard";
-import ProductInfoModal from "../ProductInfoModal/ProductInfoModal"; // ✅ import modal
+import ProductInfoModal from "../ProductInfoModal/ProductInfoModal";
 
 const ProductGrid = ({
   products = [],

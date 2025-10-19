@@ -5,6 +5,10 @@ import { useState, useEffect, useRef, memo } from "react";
 import { CATEGORY_MAP } from "../../constants/categoryMap";
 import { productAddModalStyles as styles } from "./ProductAddModal.styles";
 
+import { addSellerProduct } from "../../api/products";
+import { compressImages } from "../../utils/imageCompressor";
+
+
 const MAX_PHOTOS = 3;
 
 const ProductAddModal = memo(({ show, onClose, onSubmit }) => {
@@ -69,17 +73,30 @@ const ProductAddModal = memo(({ show, onClose, onSubmit }) => {
   };
   
   // Selecting photos
-  const handlePhotoChange = (e) => {
+  const handlePhotoChange = async (e) => {
     const files = Array.from(e.target.files);
-    if (files.length + formState.photos.length > MAX_PHOTOS) {
+    const remainingSlots = MAX_PHOTOS - formState.photos.length;
+
+    if (files.length > remainingSlots) {
       window.alert(`You can upload a maximum of ${MAX_PHOTOS} photos only.`);
       e.target.value = "";
       return;
     }
-    setFormState((prev) => ({
-      ...prev,
-      photos: [...prev.photos, ...files].slice(0, MAX_PHOTOS),
-    }));
+
+    try {
+      // Compress selected images via utility
+      const compressedFiles = await compressImages(files);
+
+      // Merge with existing photos
+      setFormState((prev) => ({
+        ...prev,
+        photos: [...prev.photos, ...compressedFiles].slice(0, MAX_PHOTOS),
+      }));
+
+      e.target.value = ""; // reset input
+    } catch (error) {
+      window.alert("Image compression failed. Please try again.");
+    }
   };
 
   // Remove photo from the selected photos
@@ -181,12 +198,11 @@ const ProductAddModal = memo(({ show, onClose, onSubmit }) => {
     return clean;
   };
 
-  // POST request on form submit
+  // 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) return;
 
-    // Format both size and weight fields before POST
     const formattedVariants = formState.variants.map((v) => ({
       ...v,
       size: formatFieldValue(v.size, "size"),
@@ -196,24 +212,19 @@ const ProductAddModal = memo(({ show, onClose, onSubmit }) => {
     const payload = new FormData();
     payload.append("name", formState.name);
     payload.append("category_id", formState.category_id);
-
     formState.photos.forEach((file) => payload.append("photos", file));
     payload.append("variants", JSON.stringify(formattedVariants));
 
     try {
-      const resp = await fetch("http://localhost:5000/seller/add-product", {
-        method: "POST",
-        body: payload,
-      });
-      const result = await resp.json();
-
-      if (resp.ok) {
-        onSubmit && onSubmit(result);
-      } else {
-        window.alert(result?.message || "Failed to add product.");
-      }
-    } catch (err) {
-      window.alert("Network error. Please try again.");
+      const result = await addSellerProduct(payload);
+      window.alert("✅ Product added successfully!");
+      onSubmit && onSubmit(result);
+    } catch (error) {
+      console.error("Error:", error);
+      window.alert(
+        error.response?.data?.message ||
+          "❌ Failed to add product. Please check your token or API."
+      );
     }
   };
 
@@ -330,7 +341,7 @@ const ProductAddModal = memo(({ show, onClose, onSubmit }) => {
                     Keep size as <b>‘Regular’</b> if there is only one size
                   </span>
 
-                  {/* ✅ Toggle buttons */}
+                  {/* Toggle buttons */}
                   <div style={styles.unitToggleContainer}>
                     {["GM", "KG"].map((unit) => (
                       <button
