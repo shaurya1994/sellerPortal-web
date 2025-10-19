@@ -68,11 +68,11 @@ const ProductAddModal = memo(({ show, onClose, onSubmit }) => {
     }));
   };
   
-  // 
+  // Selecting photos
   const handlePhotoChange = (e) => {
     const files = Array.from(e.target.files);
     if (files.length + formState.photos.length > MAX_PHOTOS) {
-      window.alert(`You can upload a maximum of ${MAX_PHOTOS} photos.`);
+      window.alert(`You can upload a maximum of ${MAX_PHOTOS} photos only.`);
       e.target.value = "";
       return;
     }
@@ -82,7 +82,7 @@ const ProductAddModal = memo(({ show, onClose, onSubmit }) => {
     }));
   };
 
-  // 
+  // Remove photo from the selected photos
   const removePhoto = (index) => {
     setFormState((prev) => ({
       ...prev,
@@ -94,21 +94,7 @@ const ProductAddModal = memo(({ show, onClose, onSubmit }) => {
   const handleVariantChange = (index, field, value) => {
     setFormState((prev) => {
       const newVariants = [...prev.variants];
-      let formatted = value;
-
-      if (field === "size") {
-        const cleanValue = value.trim();
-
-        // Only format on blur or when fully numeric on submit, not while typing
-        newVariants[index] = { ...newVariants[index], [field]: cleanValue };
-      }
-
-
-      if (field === "weight" && value.trim()) {
-        formatted = `${value}${prev.weightUnit}`;
-      }
-
-      newVariants[index] = { ...newVariants[index], [field]: formatted };
+      newVariants[index] = { ...newVariants[index], [field]: value };
       return { ...prev, variants: newVariants };
     });
   };
@@ -117,21 +103,28 @@ const ProductAddModal = memo(({ show, onClose, onSubmit }) => {
   const handleSizeBlur = (index) => {
     setFormState((prev) => {
       const newVariants = [...prev.variants];
-      const sizeValue = newVariants[index].size?.trim() || "";
-
-      // Check if purely numeric
-      const numeric = /^[0-9]+$/.test(sizeValue);
-
-      // Add space + MM if numeric and not already present
-      if (numeric && !sizeValue.toUpperCase().includes("MM")) {
-        newVariants[index].size = `${sizeValue} MM`;
-      }
-
+      newVariants[index].size = formatFieldValue(
+        newVariants[index].size,
+        "size"
+      );
       return { ...prev, variants: newVariants };
     });
   };
 
-  // 
+  // Handles GM/KG formatting after user finishes typing
+  const handleWeightBlur = (index) => {
+    setFormState((prev) => {
+      const newVariants = [...prev.variants];
+      newVariants[index].weight = formatFieldValue(
+        newVariants[index].weight,
+        "weight",
+        prev.weightUnit
+      );
+      return { ...prev, variants: newVariants };
+    });
+  };
+
+  // Add new variant
   const addVariantRow = () => {
     const last = formState.variants[formState.variants.length - 1];
     if (!last.size && !last.weight) {
@@ -144,7 +137,7 @@ const ProductAddModal = memo(({ show, onClose, onSubmit }) => {
     }));
   };
 
-  // 
+  // Remove variant row
   const removeVariantRow = (index) => {
     setFormState((prev) => ({
       ...prev,
@@ -152,7 +145,7 @@ const ProductAddModal = memo(({ show, onClose, onSubmit }) => {
     }));
   };
 
-  // 
+  // Form Validations
   const validateForm = () => {
     if (!formState.name.trim() || !formState.category_id) {
       window.alert("Product name and category are required.");
@@ -168,16 +161,44 @@ const ProductAddModal = memo(({ show, onClose, onSubmit }) => {
     return true;
   };
 
-  // 
+  // Generic field formatter for MM / GM / KG
+  const formatFieldValue = (value, type, unit = "") => {
+    const clean = value?.trim() || "";
+    if (!clean) return "";
+
+    if (type === "size") {
+      const match = clean.match(/^(\d+)\s*(mm)?$/i);
+      if (match) return `${match[1]} MM`;
+      return clean;
+    }
+
+    if (type === "weight") {
+      const match = clean.match(/^(\d+)\s*(gm|kg)?$/i);
+      if (match) return `${match[1]} ${unit}`.trim();
+      return clean;
+    }
+
+    return clean;
+  };
+
+  // POST request on form submit
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) return;
 
+    // Format both size and weight fields before POST
+    const formattedVariants = formState.variants.map((v) => ({
+      ...v,
+      size: formatFieldValue(v.size, "size"),
+      weight: formatFieldValue(v.weight, "weight", formState.weightUnit),
+    }));
+
     const payload = new FormData();
     payload.append("name", formState.name);
     payload.append("category_id", formState.category_id);
+
     formState.photos.forEach((file) => payload.append("photos", file));
-    payload.append("variants", JSON.stringify(formState.variants));
+    payload.append("variants", JSON.stringify(formattedVariants));
 
     try {
       const resp = await fetch("http://localhost:5000/seller/add-product", {
@@ -185,6 +206,7 @@ const ProductAddModal = memo(({ show, onClose, onSubmit }) => {
         body: payload,
       });
       const result = await resp.json();
+
       if (resp.ok) {
         onSubmit && onSubmit(result);
       } else {
@@ -342,9 +364,8 @@ const ProductAddModal = memo(({ show, onClose, onSubmit }) => {
                       type="text"
                       placeholder="Weight"
                       value={variant.weight}
-                      onChange={(e) =>
-                        handleVariantChange(idx, "weight", e.target.value)
-                      }
+                      onChange={(e) =>handleVariantChange(idx, "weight", e.target.value)}
+                      onBlur={() => handleWeightBlur(idx)}
                       style={styles.variantInput}
                     />
                     {formState.variants.length > 1 && (
