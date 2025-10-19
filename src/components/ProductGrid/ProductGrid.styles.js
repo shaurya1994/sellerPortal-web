@@ -1,5 +1,5 @@
 // FILE: ProductGrid.styles.js
-import { COLORS } from "../../constants/colors";
+// import { COLORS } from "../../constants/colors";
 
 export const gridStyles = {
   // 🔹 Wrapper for the entire product grid

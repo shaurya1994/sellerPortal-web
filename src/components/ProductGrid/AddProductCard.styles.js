@@ -6,7 +6,7 @@ export const addProductCardStyles = {
     border: "2px solid transparent",
     borderRadius: "12px",
     width: "100%",
-    height: "285px",
+    // height: "285px",
     boxShadow: "0 3px 10px rgba(0,0,0,0.08)",
     transition: "border 0.2s ease, transform 0.2s ease",
     display: "flex",
