@@ -1,0 +1,130 @@
+// FILE: ProductGridCard.styles.js
+import { COLORS } from "../../constants/colors";
+
+export const productGridCardStyles = {
+  productCard: {
+    backgroundColor: COLORS.card,
+    border: `2px solid transparent`,
+    borderRadius: "12px",
+    width: "100%",
+    // height: "285px",
+    boxShadow: "0 3px 10px rgba(0,0,0,0.08)",
+    transition: "border 0.25s ease, transform 0.25s ease",
+    display: "flex",
+    overflow: "hidden",
+    cursor: "pointer",
+    flexDirection: "column",
+    justifyContent: "flex-start",
+  },
+
+  productCardHover: {
+    border: `2px solid ${COLORS.primary}`,
+    transform: "translateY(-3px)",
+  },
+
+  carouselIndicators: {
+    position: "absolute",
+    bottom: "15px",
+    left: "50%",
+    transform: "translateX(-50%)",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: "6px",
+    zIndex: 8,
+  },
+
+  carouselImg: {
+    width: "100%",
+    objectFit: "cover",
+    backgroundColor: COLORS.background,
+  },
+
+  placeholderBox: {
+    width: "100%",
+    backgroundColor: "#e9ecef",
+    color: "#6c757d",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    fontWeight: 500,
+    fontSize: "14px",
+    textAlign: "center",
+  },
+
+  carouselPrevBtn: {
+    width: "55px",
+    height: "42px",
+    backgroundColor: "rgba(127,140,141,0.7)",
+    bottom: "0",
+    top: "auto",
+    border: "none",
+    borderTopRightRadius: "8px",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    zIndex: 10,
+    cursor: "pointer",
+    transition: "background-color 0.2s ease",
+    outline: "none",
+  },
+
+  carouselNextBtn: {
+    width: "55px",
+    height: "42px",
+    backgroundColor: "rgba(127,140,141,0.7)",
+    bottom: "0",
+    top: "auto",
+    border: "none",
+    borderTopLeftRadius: "8px",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    zIndex: 10,
+    cursor: "pointer",
+    transition: "background-color 0.2s ease",
+    outline: "none",
+  },
+
+  carouselPrevBtnHover: { backgroundColor: "rgba(127,140,141,0.9)" },
+  carouselNextBtnHover: { backgroundColor: "rgba(127,140,141,0.9)" },
+
+  carouselArrowIcon: {
+    filter: "invert(1)",
+    backgroundSize: "60%",
+  },
+
+  productInfo: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    padding: "10px 12px 12px 12px",
+    minHeight: "68px",
+  },
+
+  productName: {
+    fontWeight: 600,
+    fontSize: "15px",
+    color: COLORS.text,
+    margin: 0,
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    whiteSpace: "nowrap",
+  },
+
+  viewBtn: {
+    border: `1px solid ${COLORS.border}`,
+    color: COLORS.primary,
+    borderRadius: "6px",
+    fontSize: "13px",
+    fontWeight: 500,
+    backgroundColor: "transparent",
+    padding: "6px 12px",
+    cursor: "pointer",
+    transition: "all 0.2s ease",
+  },
+
+  viewBtnHover: {
+    backgroundColor: `${COLORS.primary}22`,
+  },
+};

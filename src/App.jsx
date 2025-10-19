@@ -3,7 +3,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 
 import ProductsPage from "./pages/Products/ProductsPage";
 import OrdersPage from "./pages/Orders/OrdersPage";
-import TesterPage from "./pages/Orders/OrdersPage";
+import TesterPage from "./pages/Tester/TesterPage";
 
 const App = () => {
   return (

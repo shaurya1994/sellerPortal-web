@@ -1,7 +1,9 @@
 // FILE: ProductsPage.jsx
 import { useEffect, useRef, useState, useCallback } from "react";
+
 import { productsPageStyles } from "./ProductsPage.styles";
 import { fetchSellerProducts } from "../../api/products";
+
 import ProductGrid from "../../components/ProductGrid/ProductGrid";
 import Pagination from "../../components/Pagination/Pagination";
 

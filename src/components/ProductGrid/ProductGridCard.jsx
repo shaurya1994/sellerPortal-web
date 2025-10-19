@@ -1,6 +1,6 @@
 // FILE: ProductGridCard.jsx
 import { useState, useEffect } from "react";
-import { gridStyles } from "./ProductGrid.styles";
+import { productGridCardStyles } from "./ProductGridCard.styles";
 import { COLORS } from "../../constants/colors";
 
 const ProductGridCard = ({ product, cardWidth = 320 }) => {
@@ -16,7 +16,7 @@ const ProductGridCard = ({ product, cardWidth = 320 }) => {
   const imageList = hasImages ? photos : [{ photo_url: null }];
   const imageHeight = Math.round(cardWidth * 0.65);
 
-  // ✅ Track slide change for active indicator
+  // ✅ Track carousel slide changes
   useEffect(() => {
     if (!multipleImages) return;
     const carouselEl = document.getElementById(`carousel-${product.product_id}`);
@@ -25,7 +25,7 @@ const ProductGridCard = ({ product, cardWidth = 320 }) => {
     const handleSlide = (e) => setActiveIndex(e.to);
     carouselEl.addEventListener("slid.bs.carousel", handleSlide);
 
-    // ✅ speed up transition
+    // ✅ Speed up transition
     carouselEl.querySelectorAll(".carousel-item").forEach((item) => {
       item.style.transition = "transform 0.35s ease-in-out"; // default ~0.6s → faster
     });
@@ -33,18 +33,24 @@ const ProductGridCard = ({ product, cardWidth = 320 }) => {
     return () => carouselEl.removeEventListener("slid.bs.carousel", handleSlide);
   }, [multipleImages, product.product_id]);
 
+  // ✅ Dispatch custom event to open shared modal
+  const handleViewClick = () => {
+    window.dispatchEvent(new CustomEvent("open-product-modal", { detail: product }));
+  };
+
   return (
     <div
       className="product-card"
       style={{
-        ...gridStyles.productCard,
-        ...(hovered ? gridStyles.productCardHover : {}),
+        ...productGridCardStyles.productCard,
+        ...(hovered ? productGridCardStyles.productCardHover : {}),
       }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       role="article"
       aria-label={name}
     >
+      {/* Product Carousel */}
       <div
         id={`carousel-${product.product_id}`}
         className="carousel slide"
@@ -54,7 +60,7 @@ const ProductGridCard = ({ product, cardWidth = 320 }) => {
         style={{ position: "relative" }}
       >
         {multipleImages && (
-          <div style={gridStyles.carouselIndicators}>
+          <div style={productGridCardStyles.carouselIndicators}>
             {imageList.map((_, i) => (
               <button
                 key={i}
@@ -71,7 +77,7 @@ const ProductGridCard = ({ product, cardWidth = 320 }) => {
                     i === activeIndex ? COLORS.primary : COLORS.textLight,
                   border: "none",
                   borderRadius: "2px",
-                  cursor: "default", // ✅ disable hand cursor
+                  cursor: "default",
                 }}
               />
             ))}
@@ -89,14 +95,14 @@ const ProductGridCard = ({ product, cardWidth = 320 }) => {
                   src={photo.photo_url}
                   alt={`${name} image ${index + 1}`}
                   style={{
-                    ...gridStyles.carouselImg,
+                    ...productGridCardStyles.carouselImg,
                     height: `${imageHeight}px`,
                   }}
                 />
               ) : (
                 <div
                   style={{
-                    ...gridStyles.placeholderBox,
+                    ...productGridCardStyles.placeholderBox,
                     height: `${imageHeight}px`,
                   }}
                 >
@@ -115,8 +121,8 @@ const ProductGridCard = ({ product, cardWidth = 320 }) => {
               data-bs-target={`#carousel-${product.product_id}`}
               data-bs-slide="prev"
               style={{
-                ...gridStyles.carouselPrevBtn,
-                ...(hoveredPrev ? gridStyles.carouselPrevBtnHover : {}),
+                ...productGridCardStyles.carouselPrevBtn,
+                ...(hoveredPrev ? productGridCardStyles.carouselPrevBtnHover : {}),
               }}
               onMouseEnter={() => setHoveredPrev(true)}
               onMouseLeave={() => setHoveredPrev(false)}
@@ -126,7 +132,7 @@ const ProductGridCard = ({ product, cardWidth = 320 }) => {
               <span
                 className="carousel-control-prev-icon"
                 aria-hidden="true"
-                style={gridStyles.carouselArrowIcon}
+                style={productGridCardStyles.carouselArrowIcon}
               />
             </button>
 
@@ -136,8 +142,8 @@ const ProductGridCard = ({ product, cardWidth = 320 }) => {
               data-bs-target={`#carousel-${product.product_id}`}
               data-bs-slide="next"
               style={{
-                ...gridStyles.carouselNextBtn,
-                ...(hoveredNext ? gridStyles.carouselNextBtnHover : {}),
+                ...productGridCardStyles.carouselNextBtn,
+                ...(hoveredNext ? productGridCardStyles.carouselNextBtnHover : {}),
               }}
               onMouseEnter={() => setHoveredNext(true)}
               onMouseLeave={() => setHoveredNext(false)}
@@ -147,26 +153,26 @@ const ProductGridCard = ({ product, cardWidth = 320 }) => {
               <span
                 className="carousel-control-next-icon"
                 aria-hidden="true"
-                style={gridStyles.carouselArrowIcon}
+                style={productGridCardStyles.carouselArrowIcon}
               />
             </button>
           </>
         )}
       </div>
 
-      {/* Product Info */}
-      <div style={gridStyles.productInfo}>
-        <p style={gridStyles.productName} title={name}>
+      {/* Product Info Section */}
+      <div style={productGridCardStyles.productInfo}>
+        <p style={productGridCardStyles.productName} title={name}>
           {name}
         </p>
         <button
           style={{
-            ...gridStyles.viewBtn,
-            ...(btnHover ? gridStyles.viewBtnHover : {}),
+            ...productGridCardStyles.viewBtn,
+            ...(btnHover ? productGridCardStyles.viewBtnHover : {}),
           }}
           onMouseEnter={() => setBtnHover(true)}
           onMouseLeave={() => setBtnHover(false)}
-          onClick={() => console.log("View product", product.product_id)}
+          onClick={handleViewClick}
           aria-label={`View ${name}`}
         >
           View
@@ -177,3 +183,184 @@ const ProductGridCard = ({ product, cardWidth = 320 }) => {
 };
 
 export default ProductGridCard;
+
+
+// // FILE: ProductGridCard.jsx
+// import { useState, useEffect } from "react";
+// import { productGridCardStyles } from "./ProductGridCard.styles";
+// import { COLORS } from "../../constants/colors";
+
+// const ProductGridCard = ({ product, cardWidth = 320 }) => {
+//   const [hovered, setHovered] = useState(false);
+//   const [btnHover, setBtnHover] = useState(false);
+//   const [hoveredPrev, setHoveredPrev] = useState(false);
+//   const [hoveredNext, setHoveredNext] = useState(false);
+//   const [activeIndex, setActiveIndex] = useState(0);
+
+//   const { name, photos = [] } = product;
+//   const hasImages = photos.length > 0;
+//   const multipleImages = photos.length > 1;
+//   const imageList = hasImages ? photos : [{ photo_url: null }];
+//   const imageHeight = Math.round(cardWidth * 0.65);
+
+//   // ✅ Track slide change for active indicator
+//   useEffect(() => {
+//     if (!multipleImages) return;
+//     const carouselEl = document.getElementById(`carousel-${product.product_id}`);
+//     if (!carouselEl) return;
+
+//     const handleSlide = (e) => setActiveIndex(e.to);
+//     carouselEl.addEventListener("slid.bs.carousel", handleSlide);
+
+//     // ✅ speed up transition
+//     carouselEl.querySelectorAll(".carousel-item").forEach((item) => {
+//       item.style.transition = "transform 0.35s ease-in-out"; // default ~0.6s → faster
+//     });
+
+//     return () => carouselEl.removeEventListener("slid.bs.carousel", handleSlide);
+//   }, [multipleImages, product.product_id]);
+
+//   return (
+//     <div
+//       className="product-card"
+//       style={{
+//         ...productGridCardStyles.productCard,
+//         ...(hovered ? productGridCardStyles.productCardHover : {}),
+//       }}
+//       onMouseEnter={() => setHovered(true)}
+//       onMouseLeave={() => setHovered(false)}
+//       role="article"
+//       aria-label={name}
+//     >
+//       <div
+//         id={`carousel-${product.product_id}`}
+//         className="carousel slide"
+//         data-bs-ride="false"
+//         data-bs-interval="false"
+//         data-bs-pause="false"
+//         style={{ position: "relative" }}
+//       >
+//         {multipleImages && (
+//           <div style={productGridCardStyles.carouselIndicators}>
+//             {imageList.map((_, i) => (
+//               <button
+//                 key={i}
+//                 type="button"
+//                 onClick={(e) => e.preventDefault()} // disable click
+//                 data-bs-target={`#carousel-${product.product_id}`}
+//                 data-bs-slide-to={i}
+//                 className={i === 0 ? "active" : ""}
+//                 aria-label={`Go to image ${i + 1}`}
+//                 style={{
+//                   width: "20px",
+//                   height: "4px",
+//                   backgroundColor:
+//                     i === activeIndex ? COLORS.primary : COLORS.textLight,
+//                   border: "none",
+//                   borderRadius: "2px",
+//                   cursor: "default", // ✅ disable hand cursor
+//                 }}
+//               />
+//             ))}
+//           </div>
+//         )}
+
+//         <div className="carousel-inner">
+//           {imageList.map((photo, index) => (
+//             <div
+//               key={index}
+//               className={`carousel-item ${index === 0 ? "active" : ""}`}
+//             >
+//               {photo.photo_url ? (
+//                 <img
+//                   src={photo.photo_url}
+//                   alt={`${name} image ${index + 1}`}
+//                   style={{
+//                     ...productGridCardStyles.carouselImg,
+//                     height: `${imageHeight}px`,
+//                   }}
+//                 />
+//               ) : (
+//                 <div
+//                   style={{
+//                     ...productGridCardStyles.placeholderBox,
+//                     height: `${imageHeight}px`,
+//                   }}
+//                 >
+//                   <span>No Image Available</span>
+//                 </div>
+//               )}
+//             </div>
+//           ))}
+//         </div>
+
+//         {multipleImages && (
+//           <>
+//             <button
+//               className="carousel-control-prev"
+//               type="button"
+//               data-bs-target={`#carousel-${product.product_id}`}
+//               data-bs-slide="prev"
+//               style={{
+//                 ...productGridCardStyles.carouselPrevBtn,
+//                 ...(hoveredPrev ? productGridCardStyles.carouselPrevBtnHover : {}),
+//               }}
+//               onMouseEnter={() => setHoveredPrev(true)}
+//               onMouseLeave={() => setHoveredPrev(false)}
+//               onMouseDown={(e) => e.currentTarget.blur()}
+//               aria-label="Previous image"
+//             >
+//               <span
+//                 className="carousel-control-prev-icon"
+//                 aria-hidden="true"
+//                 style={productGridCardStyles.carouselArrowIcon}
+//               />
+//             </button>
+
+//             <button
+//               className="carousel-control-next"
+//               type="button"
+//               data-bs-target={`#carousel-${product.product_id}`}
+//               data-bs-slide="next"
+//               style={{
+//                 ...productGridCardStyles.carouselNextBtn,
+//                 ...(hoveredNext ? productGridCardStyles.carouselNextBtnHover : {}),
+//               }}
+//               onMouseEnter={() => setHoveredNext(true)}
+//               onMouseLeave={() => setHoveredNext(false)}
+//               onMouseDown={(e) => e.currentTarget.blur()}
+//               aria-label="Next image"
+//             >
+//               <span
+//                 className="carousel-control-next-icon"
+//                 aria-hidden="true"
+//                 style={productGridCardStyles.carouselArrowIcon}
+//               />
+//             </button>
+//           </>
+//         )}
+//       </div>
+
+//       {/* Product Info */}
+//       <div style={productGridCardStyles.productInfo}>
+//         <p style={productGridCardStyles.productName} title={name}>
+//           {name}
+//         </p>
+//         <button
+//           style={{
+//             ...productGridCardStyles.viewBtn,
+//             ...(btnHover ? productGridCardStyles.viewBtnHover : {}),
+//           }}
+//           onMouseEnter={() => setBtnHover(true)}
+//           onMouseLeave={() => setBtnHover(false)}
+//           onClick={() => console.log("View product", product.product_id)}
+//           aria-label={`View ${name}`}
+//         >
+//           View
+//         </button>
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default ProductGridCard;

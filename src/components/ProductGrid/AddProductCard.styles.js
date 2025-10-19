@@ -1,0 +1,44 @@
+import { COLORS } from "../../constants/colors";
+
+export const addProductCardStyles = {
+  addCard: {
+    backgroundColor: COLORS.card,
+    border: "2px solid transparent",
+    borderRadius: "12px",
+    width: "100%",
+    height: "285px",
+    boxShadow: "0 3px 10px rgba(0,0,0,0.08)",
+    transition: "border 0.2s ease, transform 0.2s ease",
+    display: "flex",
+    cursor: "pointer",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    position: "relative",
+  },
+
+  addBox: {
+    width: "84px",
+    height: "84px",
+    borderRadius: "18px",
+    border: `2px dashed ${COLORS.border}`,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    fontSize: "48px",
+    color: COLORS.textLight,
+    lineHeight: 1,
+    transition: "all 0.2s ease",
+  },
+
+  addText: {
+    fontWeight: 600,
+    color: COLORS.text,
+    textAlign: "center",
+    margin: 0,
+    position: "absolute",
+    bottom: "44px",
+    left: 0,
+    right: 0,
+  },
+};
