@@ -42,9 +42,8 @@ export const productInfoContainerStyles = {
     fontSize: "0.9rem",
   },
   table: {
-    width: "100%",
     borderCollapse: "collapse",
-    border: "1px solid #ccc",
+    width: "auto",
   },
   lightboxOverlay: {
     position: "fixed",
@@ -76,81 +75,3 @@ export const productInfoContainerStyles = {
     zIndex: 10000,
   },
 };
-
-// // FILE: ProductInfoContainer.styles.js
-// export const productInfoContainerStyles = {
-//   container: {
-//     display: "flex",
-//     flexDirection: "row",
-//     alignItems: "flex-start",
-//     gap: "16px",
-//     flexWrap: "wrap",
-//   },
-//   imageSection: {
-//     flex: "1 1 40%",
-//     cursor: "pointer",
-//   },
-//   mainImage: {
-//     width: "100%",
-//     height: "auto",
-//     borderRadius: "8px",
-//     transition: "transform 0.3s ease, box-shadow 0.3s ease",
-//   },
-//   noImage: {
-//     width: "100%",
-//     height: "200px",
-//     background: "#f2f2f2",
-//     borderRadius: "6px",
-//     display: "flex",
-//     alignItems: "center",
-//     justifyContent: "center",
-//     color: "#777",
-//   },
-//   infoSection: {
-//     flex: "1 1 55%",
-//     paddingRight: "8px",
-//   },
-//   name: {
-//     marginBottom: "6px",
-//     fontWeight: 600,
-//     fontSize: "1.1rem",
-//   },
-//   category: {
-//     color: "#555",
-//     marginBottom: "10px",
-//     fontSize: "0.9rem",
-//   },
-//   table: {
-//     width: "100%",
-//     borderCollapse: "collapse",
-//   },
-//   lightboxOverlay: {
-//     position: "fixed",
-//     top: 0,
-//     left: 0,
-//     right: 0,
-//     bottom: 0,
-//     backgroundColor: "rgba(0, 0, 0, 0.85)",
-//     display: "flex",
-//     justifyContent: "center",
-//     alignItems: "center",
-//     zIndex: 9999,
-//   },
-//   lightboxImage: {
-//     maxWidth: "90%",
-//     maxHeight: "90%",
-//     borderRadius: "8px",
-//     boxShadow: "0 0 20px rgba(255,255,255,0.2)",
-//   },
-//   arrowBtn: {
-//     position: "absolute",
-//     top: "50%",
-//     transform: "translateY(-50%)",
-//     fontSize: "2.5rem",
-//     color: "#fff",
-//     background: "none",
-//     border: "none",
-//     cursor: "pointer",
-//     zIndex: 10000,
-//   },
-// };

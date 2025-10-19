@@ -1,5 +1,6 @@
 // FILE: src/components/ProductInfoModal.styles.jsx
 export const productInfoModalStyles = {
+
   modalContent: {
     // borderRadius: "12px",
     borderRadius: "8px",
