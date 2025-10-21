@@ -1,24 +1,190 @@
 // FILE: src/components/ProductInfoModal.styles.jsx
-export const productInfoModalStyles = {
+import { COLORS } from "../../constants/colors";
 
+export const productInfoModalStyles = {
   modalContent: {
-    // borderRadius: "12px",
-    borderRadius: "8px",
+    borderRadius: "10px",
     overflow: "hidden",
+    boxShadow: "0 4px 24px rgba(0,0,0,0.2)",
+    backgroundColor: COLORS.white,
+  },
+  modalTitle: {
+    margin: 0,
+    fontSize: "1.4rem",
+    fontWeight: 700,
+    color: COLORS.text,
   },
   modalBody: {
-    // minHeight: "300px",
-    // padding: "16px 20px 12px 20px", // reduced bottom padding
-    padding: "16px 20px 16px 20px", // reduced bottom padding
+    padding: "16px 20px",
   },
   container: {
-    width: "100%",
-  },
-  row: {
     display: "flex",
-    justifyContent: "space-between",
+    flexDirection: "row",
+    alignItems: "flex-start",
+    gap: "16px",
+    flexWrap: "wrap",
   },
-  flexBox: {
+  imageSection: { flex: "1 1 40%", cursor: "pointer" },
+  mainImage: {
+    width: "100%",
+    height: "auto",
+    borderRadius: "8px",
+    transition: "transform 0.3s ease, box-shadow 0.3s ease",
+  },
+  noImage: {
+    width: "100%",
+    height: "200px",
+    background: "#f5f5f5",
+    borderRadius: "6px",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    color: "#777",
+    fontSize: "0.95rem",
+  },
+  editButton: {
+    marginTop: "12px",
+    width: "100%",
+    padding: "10px 0",
+    border: "none",
+    borderRadius: "6px",
+    background: COLORS.primary,
+    color: COLORS.white,
+    fontWeight: 600,
+    cursor: "pointer",
+  },
+  infoSection: { flex: "1 1 55%", paddingRight: "8px" },
+  name: { marginBottom: "6px", fontWeight: 600, fontSize: "1.1rem" },
+  category: { color: "#666", marginBottom: "10px", fontSize: "0.9rem" },
+  table: { width: "100%", borderCollapse: "collapse" },
+  lightboxOverlay: {
+    position: "fixed",
+    top: 0, left: 0, right: 0, bottom: 0,
+    backgroundColor: "rgba(0,0,0,0.9)",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 1055,
+  },
+  lightboxImage: {
+    maxWidth: "90%",
+    maxHeight: "90%",
+    borderRadius: "8px",
+    boxShadow: "0 0 20px rgba(255,255,255,0.3)",
+  },
+  arrowBtn: {
+    position: "absolute",
+    top: "50%",
+    transform: "translateY(-50%)",
+    fontSize: "2.5rem",
+    color: "#fff",
+    background: "none",
+    border: "none",
+    cursor: "pointer",
+    zIndex: 1060,
+    userSelect: "none",
+  },
+
+  /* ---------- EDIT MODE ---------- */
+  editSection: {
+    background: COLORS.background,
+    padding: "16px",
+    borderRadius: "8px",
+    transition: "all 0.3s ease",
+  },
+  editTitle: {
+    fontSize: "1rem",
+    fontWeight: 600,
+    color: COLORS.text,
+    marginBottom: "10px",
+  },
+  imageGrid: {
+    display: "flex",
+    flexWrap: "wrap",
+    gap: "12px",
+    marginBottom: "18px",
+  },
+  imageCard: {
+    position: "relative",
+    width: "120px",
+    height: "120px",
+    borderRadius: "8px",
+    overflow: "hidden",
+    boxShadow: "0 2px 6px rgba(0,0,0,0.15)",
+  },
+  imageThumb: { width: "100%", height: "100%", objectFit: "cover" },
+  removeBtn: {
+    position: "absolute",
+    top: "6px",
+    right: "6px",
+    background: "rgba(0,0,0,0.6)",
+    color: COLORS.white,
+    border: "none",
+    width: "24px",
+    height: "24px",
+    borderRadius: "50%",
+    fontSize: "1rem",
+    lineHeight: "1",
+    textAlign: "center",
+    cursor: "pointer",
+  },
+  addCard: {
+    width: "120px",
+    height: "120px",
+    borderRadius: "8px",
+    border: `2px dashed ${COLORS.border}`,
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    color: COLORS.textLight,
+    cursor: "pointer",
+    background: COLORS.white,
+  },
+  addSymbol: { fontSize: "1.8rem", lineHeight: "1" },
+  addText: { fontSize: "0.8rem" },
+  actionRow: {
+    display: "flex",
+    justifyContent: "flex-end",
     gap: "10px",
   },
+  cancelBtn: {
+    background: COLORS.white,
+    border: `1px solid ${COLORS.border}`,
+    color: COLORS.text,
+    padding: "8px 16px",
+    borderRadius: "6px",
+    cursor: "pointer",
+  },
+  saveBtn: {
+    background: COLORS.primary,
+    border: "none",
+    color: COLORS.white,
+    padding: "8px 16px",
+    borderRadius: "6px",
+    fontWeight: 600,
+    cursor: "pointer",
+  },
 };
+
+// // FILE: src/components/ProductInfoModal.styles.jsx
+// export const productInfoModalStyles = {
+
+//   modalContent: {
+//     borderRadius: "8px",
+//     overflow: "hidden",
+//   },
+//   modalBody: {
+//     padding: "16px 20px 16px 20px", // reduced bottom padding
+//   },
+//   container: {
+//     width: "100%",
+//   },
+//   row: {
+//     display: "flex",
+//     justifyContent: "space-between",
+//   },
+//   flexBox: {
+//     gap: "10px",
+//   },
+// };

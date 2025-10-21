@@ -1,4 +1,4 @@
-// FILE: ProductInfoContainer.styles.js
+// FILE: src/components/ProductInfoContainer.styles.js
 export const productInfoContainerStyles = {
   container: {
     display: "flex",

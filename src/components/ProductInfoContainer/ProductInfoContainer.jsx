@@ -1,4 +1,4 @@
-// FILE: ProductInfoContainer.jsx
+// FILE: src/components/ProductInfoContainer.jsx
 import { useState, useEffect, useCallback } from "react";
 import { productInfoContainerStyles as styles } from "./ProductInfoContainer.styles";
 import { getCategoryName } from "../../constants/categoryMap";

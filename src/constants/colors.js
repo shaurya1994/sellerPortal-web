@@ -90,6 +90,7 @@ const roseGoldTheme = {
 export const THEMES = {
   midnight: midnightTheme,
   roseGold: roseGoldTheme,
+  mint: mintTheme,
 };
 
 // 👇 set default theme here
