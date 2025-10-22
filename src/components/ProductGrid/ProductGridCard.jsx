@@ -84,34 +84,6 @@ const ProductGridCard = ({ product, cardWidth = 320 }) => {
           </div>
         )}
 
-        {/* <div className="carousel-inner">
-          {imageList.map((photo, index) => (
-            <div
-              key={index}
-              className={`carousel-item ${index === 0 ? "active" : ""}`}
-            >
-              {photo.photo_url ? (
-                <img
-                  src={photo.photo_url}
-                  alt={`${name} image ${index + 1}`}
-                  style={{
-                    ...productGridCardStyles.carouselImg,
-                    height: `${imageHeight}px`,
-                  }}
-                />
-              ) : (
-                <div
-                  style={{
-                    ...productGridCardStyles.placeholderBox,
-                    height: `${imageHeight}px`,
-                  }}
-                >
-                  <span>No Image Available</span>
-                </div>
-              )}
-            </div>
-          ))}
-        </div> */}
         <div className="carousel-inner">
           {imageList.map((photo, index) => (
             <div

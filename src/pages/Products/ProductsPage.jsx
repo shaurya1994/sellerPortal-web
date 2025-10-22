@@ -12,7 +12,7 @@ const ProductsPage = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // ✅ Add modal visibility state
+  // Add modal visibility state
   const [showAddModal, setShowAddModal] = useState(false);
 
   // Layout / pagination states
@@ -39,7 +39,7 @@ const ProductsPage = () => {
     return () => window.removeEventListener("resize", measure);
   }, [measure]);
 
-  // ✅ Fetch products function (so we can call again after add)
+  // Fetch products function (so we can call again after add)
   const loadProducts = useCallback(async () => {
     setLoading(true);
     try {
@@ -83,12 +83,12 @@ const ProductsPage = () => {
   const end = start + itemsPerPage;
   const visibleProducts = products.slice(start, end);
 
-  // ✅ Handle Add Product click
+  // Handle Add Product click
   const handleAddProductClick = () => {
     setShowAddModal(true);
   };
 
-  // ✅ Handle Product Added
+  // Handle Product Added
   const handleProductAdded = async (newProductData) => {
     // Option 1: Simply refetch all
     await loadProducts();
@@ -121,7 +121,7 @@ const ProductsPage = () => {
               <ProductGrid
                 products={visibleProducts}
                 showAddCard={true}
-                onAddClick={handleAddProductClick} // ✅ replaced console.log
+                onAddClick={handleAddProductClick}
                 cardWidth={effectiveCardWidth}
                 gap={GRID_GAP}
               />
@@ -151,7 +151,7 @@ const ProductsPage = () => {
         />
       </div>
 
-      {/* ✅ Add Product Modal */}
+      {/* Add Product Modal */}
       <ProductAddModal
         show={showAddModal}
         onClose={() => setShowAddModal(false)}

@@ -165,26 +165,18 @@ export const productInfoModalStyles = {
     fontWeight: 600,
     cursor: "pointer",
   },
+  toast: {
+    position: "fixed",
+    bottom: "24px",
+    right: "24px",
+    padding: "12px 20px",
+    color: "white",
+    borderRadius: "6px",
+    boxShadow: "0 4px 10px rgba(0,0,0,0.2)",
+    fontWeight: 500,
+    fontSize: "15px",
+    zIndex: 9999,
+    display: "none",
+    transition: "opacity 0.3s ease",
+  }
 };
-
-// // FILE: src/components/ProductInfoModal.styles.jsx
-// export const productInfoModalStyles = {
-
-//   modalContent: {
-//     borderRadius: "8px",
-//     overflow: "hidden",
-//   },
-//   modalBody: {
-//     padding: "16px 20px 16px 20px", // reduced bottom padding
-//   },
-//   container: {
-//     width: "100%",
-//   },
-//   row: {
-//     display: "flex",
-//     justifyContent: "space-between",
-//   },
-//   flexBox: {
-//     gap: "10px",
-//   },
-// };
