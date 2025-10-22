@@ -1,4 +1,4 @@
-// FILE: AddProductCard.jsx
+// FILE: src/components/ProductGrid/AddProductCard.jsx
 import { addProductCardStyles } from "./AddProductCard.styles";
 
 const AddProductCard = ({ onClick }) => {

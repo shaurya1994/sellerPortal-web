@@ -16,12 +16,10 @@ export const productGridCardStyles = {
     flexDirection: "column",
     justifyContent: "flex-start",
   },
-
   productCardHover: {
     border: `2px solid ${COLORS.primary}`,
     transform: "translateY(-3px)",
   },
-
   carouselIndicators: {
     position: "absolute",
     bottom: "15px",
@@ -33,13 +31,11 @@ export const productGridCardStyles = {
     gap: "6px",
     zIndex: 8,
   },
-
   carouselImg: {
     width: "100%",
     objectFit: "cover",
     backgroundColor: COLORS.background,
   },
-
   placeholderBox: {
     width: "100%",
     backgroundColor: "#e9ecef",
@@ -51,7 +47,6 @@ export const productGridCardStyles = {
     fontSize: "14px",
     textAlign: "center",
   },
-
   carouselPrevBtn: {
     width: "55px",
     height: "42px",
@@ -68,7 +63,6 @@ export const productGridCardStyles = {
     transition: "background-color 0.2s ease",
     outline: "none",
   },
-
   carouselNextBtn: {
     width: "55px",
     height: "42px",
@@ -85,15 +79,16 @@ export const productGridCardStyles = {
     transition: "background-color 0.2s ease",
     outline: "none",
   },
-
-  carouselPrevBtnHover: { backgroundColor: "rgba(127,140,141,0.9)" },
-  carouselNextBtnHover: { backgroundColor: "rgba(127,140,141,0.9)" },
-
+  carouselPrevBtnHover: { 
+    backgroundColor: "rgba(127,140,141,0.9)" 
+  },
+  carouselNextBtnHover: { 
+    backgroundColor: "rgba(127,140,141,0.9)" 
+  },
   carouselArrowIcon: {
     filter: "invert(1)",
     backgroundSize: "60%",
   },
-
   productInfo: {
     display: "flex",
     justifyContent: "space-between",
@@ -101,7 +96,6 @@ export const productGridCardStyles = {
     padding: "10px 12px 12px 12px",
     minHeight: "68px",
   },
-
   productName: {
     fontWeight: 600,
     fontSize: "15px",
@@ -111,7 +105,6 @@ export const productGridCardStyles = {
     textOverflow: "ellipsis",
     whiteSpace: "nowrap",
   },
-
   viewBtn: {
     border: `1px solid ${COLORS.border}`,
     color: COLORS.primary,
@@ -123,7 +116,6 @@ export const productGridCardStyles = {
     cursor: "pointer",
     transition: "all 0.2s ease",
   },
-
   viewBtnHover: {
     backgroundColor: `${COLORS.primary}22`,
   },

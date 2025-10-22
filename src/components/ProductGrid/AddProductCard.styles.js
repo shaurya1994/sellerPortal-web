@@ -16,7 +16,6 @@ export const addProductCardStyles = {
     justifyContent: "center",
     position: "relative",
   },
-
   addBox: {
     width: "84px",
     height: "84px",
@@ -30,7 +29,6 @@ export const addProductCardStyles = {
     lineHeight: 1,
     transition: "all 0.2s ease",
   },
-
   addText: {
     fontWeight: 600,
     color: COLORS.text,
