@@ -16,7 +16,7 @@ const ProductGridCard = ({ product, cardWidth = 320 }) => {
   const imageList = hasImages ? photos : [{ photo_url: null }];
   const imageHeight = Math.round(cardWidth * 0.65);
 
-  // ✅ Track carousel slide changes
+  // Track carousel slide changes
   useEffect(() => {
     if (!multipleImages) return;
     const carouselEl = document.getElementById(`carousel-${product.product_id}`);
@@ -25,7 +25,7 @@ const ProductGridCard = ({ product, cardWidth = 320 }) => {
     const handleSlide = (e) => setActiveIndex(e.to);
     carouselEl.addEventListener("slid.bs.carousel", handleSlide);
 
-    // ✅ Speed up transition
+    // Speed up transition
     carouselEl.querySelectorAll(".carousel-item").forEach((item) => {
       item.style.transition = "transform 0.35s ease-in-out"; // default ~0.6s → faster
     });
@@ -33,7 +33,7 @@ const ProductGridCard = ({ product, cardWidth = 320 }) => {
     return () => carouselEl.removeEventListener("slid.bs.carousel", handleSlide);
   }, [multipleImages, product.product_id]);
 
-  // ✅ Dispatch custom event to open shared modal
+  // Dispatch custom event to open shared modal
   const handleViewClick = () => {
     window.dispatchEvent(new CustomEvent("open-product-modal", { detail: product }));
   };

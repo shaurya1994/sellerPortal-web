@@ -1,20 +1,25 @@
+// FILE: src/components/ProductGrid/AddProductCard.styles.js
 import { COLORS } from "../../constants/colors";
 
 export const addProductCardStyles = {
   addCard: {
     backgroundColor: COLORS.card,
-    border: "2px solid transparent",
+    border: `2px dashed ${COLORS.border}`,
     borderRadius: "12px",
     width: "100%",
-    // height: "285px",
-    boxShadow: "0 3px 10px rgba(0,0,0,0.08)",
-    transition: "border 0.2s ease, transform 0.2s ease",
+    boxShadow: "0 3px 10px rgba(0,0,0,0.06)",
+    transition: "all 0.25s ease",
     display: "flex",
-    cursor: "pointer",
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
+    cursor: "pointer",
     position: "relative",
+  },
+  addCardHover: {
+    border: `2px solid ${COLORS.primary}`,
+    boxShadow: "0 4px 14px rgba(0,0,0,0.12)",
+    transform: "translateY(-4px)",
   },
   addBox: {
     width: "84px",
@@ -24,19 +29,21 @@ export const addProductCardStyles = {
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    fontSize: "48px",
+    fontSize: "52px",
     color: COLORS.textLight,
     lineHeight: 1,
-    transition: "all 0.2s ease",
+    transition: "all 0.25s ease",
+  },
+  addBoxHover: {
+    border: `2px dashed ${COLORS.primary}`,
+    color: COLORS.primary,
+    transform: "scale(1.08)",
   },
   addText: {
     fontWeight: 600,
     color: COLORS.text,
     textAlign: "center",
-    margin: 0,
-    position: "absolute",
-    bottom: "44px",
-    left: 0,
-    right: 0,
+    marginTop: "20px",
+    fontSize: "15px",
   },
 };

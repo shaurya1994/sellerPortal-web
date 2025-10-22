@@ -7,7 +7,6 @@ export const productGridCardStyles = {
     border: `2px solid transparent`,
     borderRadius: "12px",
     width: "100%",
-    // height: "285px",
     boxShadow: "0 3px 10px rgba(0,0,0,0.08)",
     transition: "border 0.25s ease, transform 0.25s ease",
     display: "flex",

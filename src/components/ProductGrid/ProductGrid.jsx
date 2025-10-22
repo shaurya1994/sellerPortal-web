@@ -1,5 +1,6 @@
 // FILE: src/ProductGrid/ProductGrid.jsx
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
+
 import AddProductCard from "./AddProductCard";
 import ProductGridCard from "./ProductGridCard";
 import ProductInfoModal from "../ProductInfoModal/ProductInfoModal";
@@ -15,12 +16,12 @@ const ProductGrid = ({
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [showModal, setShowModal] = useState(false);
 
-  // Sync external products
+  // ---- Sync external products ----
   useEffect(() => {
     setProductList(products);
   }, [products]);
 
-  // Listen for modal open event
+  // ---- Listen for modal open event ----
   useEffect(() => {
     const handleOpenModal = (e) => {
       setSelectedProduct(e.detail);
@@ -30,10 +31,10 @@ const ProductGrid = ({
     return () => window.removeEventListener("open-product-modal", handleOpenModal);
   }, []);
 
-  // ✅ Callback from modal — patch specific product
+  // ---- Patch product after modal save ----
   const handleProductRefresh = (updatedProduct) => {
     if (!updatedProduct?.product_id) return;
-    updatedProduct._photosUpdatedAt = Date.now(); // <– trigger card remount
+    updatedProduct._photosUpdatedAt = Date.now();
 
     setProductList((prev) =>
       prev.map((p) =>
@@ -43,32 +44,42 @@ const ProductGrid = ({
     setSelectedProduct(updatedProduct);
   };
 
+  // ---- Compute consistent card height ----
+  const cardHeight = useMemo(() => {
+    const imageHeight = Math.round(cardWidth * 0.65);
+    return imageHeight + 68; // same formula as ProductGridCard
+  }, [cardWidth]);
+
+  // ---- Wrapper layout ----
   const wrapperStyle = {
     display: "grid",
     gridTemplateColumns: `repeat(auto-fill, minmax(${cardWidth}px, 1fr))`,
     gap: `${gap}px`,
     width: "100%",
     boxSizing: "border-box",
+    justifyItems: "center",
+    alignItems: "start",
+    minHeight: `${cardHeight + 30}px`, // Prevents grid shrink when only Add card
+    paddingBottom: "10px",
+    transition: "all 0.3s ease",
   };
 
-  // ✅ Build product cards (include timestamp in key to force remount)
-  const items = showAddCard
-    ? [<AddProductCard key="add-card" onClick={onAddClick} />].concat(
-        productList.map((p) => (
-          <ProductGridCard
-            key={`${p.product_id}-${p._photosUpdatedAt || 0}`}
-            product={p}
-            cardWidth={cardWidth}
-          />
-        ))
-      )
-    : productList.map((p) => (
-        <ProductGridCard
-          key={`${p.product_id}-${p._photosUpdatedAt || 0}`}
-          product={p}
-          cardWidth={cardWidth}
-        />
-      ));
+  // ---- Cards ----
+  const items = useMemo(() => {
+    const addCard = showAddCard ? (
+      <AddProductCard key="add-card" onClick={onAddClick} cardWidth={cardWidth} />
+    ) : null;
+
+    const productCards = productList.map((p) => (
+      <ProductGridCard
+        key={`${p.product_id}-${p._photosUpdatedAt || 0}`}
+        product={p}
+        cardWidth={cardWidth}
+      />
+    ));
+
+    return showAddCard ? [addCard, ...productCards] : productCards;
+  }, [showAddCard, productList, onAddClick, cardWidth]);
 
   return (
     <>
