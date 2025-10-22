@@ -7,6 +7,7 @@ import { productAddModalStyles as styles } from "./ProductAddModal.styles";
 
 import { addSellerProduct } from "../../api/products";
 import { compressImages } from "../../utils/imageCompressor";
+import ToastBanner from "../ToastBanner/ToastBanner";
 
 const MAX_PHOTOS = 3;
 
@@ -15,6 +16,7 @@ const ProductAddModal = memo(({ show, onClose, onSubmit }) => {
   const [hoveredIndex, setHoveredIndex] = useState(null);
   const [isCompressing, setIsCompressing] = useState(false);
   const [submitHover, setSubmitHover] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
 
   const [formState, setFormState] = useState({
     name: "",
@@ -23,6 +25,12 @@ const ProductAddModal = memo(({ show, onClose, onSubmit }) => {
     variants: [{ size: "", weight: "" }],
     weightUnit: "GM",
   });
+
+  // ✅ helper to trigger toast
+  const showToast = (msg) => {
+    setToastMessage(msg);
+    setTimeout(() => setToastMessage(""), 2500);
+  };
 
   // Initialize modal
   useEffect(() => {
@@ -71,7 +79,7 @@ const ProductAddModal = memo(({ show, onClose, onSubmit }) => {
     }));
   };
 
-  // ---- Selecting photos ----
+  // Selecting photos
   const handlePhotoChange = async (e) => {
     const files = Array.from(e.target.files);
     const remainingSlots = MAX_PHOTOS - formState.photos.length;
@@ -83,7 +91,7 @@ const ProductAddModal = memo(({ show, onClose, onSubmit }) => {
     }
 
     try {
-      setIsCompressing(true); // 🟢 show loader
+      setIsCompressing(true);
       const compressedFiles = await compressImages(files);
 
       setFormState((prev) => ({
@@ -94,7 +102,7 @@ const ProductAddModal = memo(({ show, onClose, onSubmit }) => {
     } catch (error) {
       window.alert("Image compression failed. Please try again.");
     } finally {
-      setIsCompressing(false); // 🟢 hide loader
+      setIsCompressing(false);
     }
   };
 
@@ -116,10 +124,7 @@ const ProductAddModal = memo(({ show, onClose, onSubmit }) => {
   const handleSizeBlur = (index) => {
     setFormState((prev) => {
       const newVariants = [...prev.variants];
-      newVariants[index].size = formatFieldValue(
-        newVariants[index].size,
-        "size"
-      );
+      newVariants[index].size = formatFieldValue(newVariants[index].size, "size");
       return { ...prev, variants: newVariants };
     });
   };
@@ -160,9 +165,7 @@ const ProductAddModal = memo(({ show, onClose, onSubmit }) => {
       window.alert("Product name and category are required.");
       return false;
     }
-    const invalidVariant = formState.variants.some(
-      (v) => !v.size && !v.weight
-    );
+    const invalidVariant = formState.variants.some((v) => !v.size && !v.weight);
     if (invalidVariant) {
       window.alert("Each variant must have at least size or weight filled.");
       return false;
@@ -207,7 +210,8 @@ const ProductAddModal = memo(({ show, onClose, onSubmit }) => {
 
     try {
       const result = await addSellerProduct(payload);
-      window.alert("✅ Product added successfully!");
+
+      showToast("✅ Product added successfully!"); // ✅ use consistent toast
       onSubmit && onSubmit(result);
     } catch (error) {
       console.error("Error:", error);
@@ -299,7 +303,6 @@ const ProductAddModal = memo(({ show, onClose, onSubmit }) => {
                     />
                   </label>
 
-                  {/* 🟢 Loader during compression */}
                   {isCompressing && (
                     <div style={{ color: "#666", fontSize: "0.9rem" }}>
                       Compressing images…
@@ -326,12 +329,7 @@ const ProductAddModal = memo(({ show, onClose, onSubmit }) => {
                           <button
                             type="button"
                             onClick={() => removePhoto(idx)}
-                            style={{
-                              ...styles.photoRemoveCross,
-                              ...(hoveredIndex === idx
-                                ? styles.photoRemoveCrossHover
-                                : {}),
-                            }}
+                            style={styles.photoRemoveCross}
                           >
                             ×
                           </button>
@@ -430,13 +428,16 @@ const ProductAddModal = memo(({ show, onClose, onSubmit }) => {
           </div>
         </div>
       </div>
+
+      {/* ✅ Unified Toast Banner */}
+      <ToastBanner message={toastMessage} type="success" />
     </div>
   );
 });
 
 export default ProductAddModal;
 
-// // FILE: ProductAddModal.jsx
+// // FILE: src/components/ProductAddModal/ProductAddModal.jsx
 // import { Modal } from "bootstrap";
 // import { useState, useEffect, useRef, memo } from "react";
 
@@ -446,12 +447,13 @@ export default ProductAddModal;
 // import { addSellerProduct } from "../../api/products";
 // import { compressImages } from "../../utils/imageCompressor";
 
-
 // const MAX_PHOTOS = 3;
 
 // const ProductAddModal = memo(({ show, onClose, onSubmit }) => {
 //   const modalRef = useRef(null);
 //   const [hoveredIndex, setHoveredIndex] = useState(null);
+//   const [isCompressing, setIsCompressing] = useState(false);
+//   const [submitHover, setSubmitHover] = useState(false);
 
 //   const [formState, setFormState] = useState({
 //     name: "",
@@ -492,13 +494,11 @@ export default ProductAddModal;
 //     });
 //   };
 
-//   // Text input changes
 //   const handleInputChange = (e) => {
 //     const { name, value } = e.target;
 //     setFormState((prev) => ({ ...prev, [name]: value }));
 //   };
 
-//   // New toggle buttons for weight unit
 //   const handleUnitSelect = (unit) => {
 //     setFormState((prev) => ({
 //       ...prev,
@@ -509,8 +509,8 @@ export default ProductAddModal;
 //       })),
 //     }));
 //   };
-  
-//   // Selecting photos
+
+//   // ---- Selecting photos ----
 //   const handlePhotoChange = async (e) => {
 //     const files = Array.from(e.target.files);
 //     const remainingSlots = MAX_PHOTOS - formState.photos.length;
@@ -522,22 +522,21 @@ export default ProductAddModal;
 //     }
 
 //     try {
-//       // Compress selected images via utility
+//       setIsCompressing(true); // 🟢 show loader
 //       const compressedFiles = await compressImages(files);
 
-//       // Merge with existing photos
 //       setFormState((prev) => ({
 //         ...prev,
 //         photos: [...prev.photos, ...compressedFiles].slice(0, MAX_PHOTOS),
 //       }));
-
-//       e.target.value = ""; // reset input
+//       e.target.value = "";
 //     } catch (error) {
 //       window.alert("Image compression failed. Please try again.");
+//     } finally {
+//       setIsCompressing(false); // 🟢 hide loader
 //     }
 //   };
 
-//   // Remove photo from the selected photos
 //   const removePhoto = (index) => {
 //     setFormState((prev) => ({
 //       ...prev,
@@ -545,7 +544,6 @@ export default ProductAddModal;
 //     }));
 //   };
 
-//   // Variant input handling
 //   const handleVariantChange = (index, field, value) => {
 //     setFormState((prev) => {
 //       const newVariants = [...prev.variants];
@@ -554,7 +552,6 @@ export default ProductAddModal;
 //     });
 //   };
 
-//   // Handles MM formatting after user finishes typing
 //   const handleSizeBlur = (index) => {
 //     setFormState((prev) => {
 //       const newVariants = [...prev.variants];
@@ -566,7 +563,6 @@ export default ProductAddModal;
 //     });
 //   };
 
-//   // Handles GM/KG formatting after user finishes typing
 //   const handleWeightBlur = (index) => {
 //     setFormState((prev) => {
 //       const newVariants = [...prev.variants];
@@ -579,7 +575,6 @@ export default ProductAddModal;
 //     });
 //   };
 
-//   // Add new variant
 //   const addVariantRow = () => {
 //     const last = formState.variants[formState.variants.length - 1];
 //     if (!last.size && !last.weight) {
@@ -592,7 +587,6 @@ export default ProductAddModal;
 //     }));
 //   };
 
-//   // Remove variant row
 //   const removeVariantRow = (index) => {
 //     setFormState((prev) => ({
 //       ...prev,
@@ -600,7 +594,6 @@ export default ProductAddModal;
 //     }));
 //   };
 
-//   // Form Validations
 //   const validateForm = () => {
 //     if (!formState.name.trim() || !formState.category_id) {
 //       window.alert("Product name and category are required.");
@@ -616,7 +609,6 @@ export default ProductAddModal;
 //     return true;
 //   };
 
-//   // Generic field formatter for MM / GM / KG
 //   const formatFieldValue = (value, type, unit = "") => {
 //     const clean = value?.trim() || "";
 //     if (!clean) return "";
@@ -636,7 +628,6 @@ export default ProductAddModal;
 //     return clean;
 //   };
 
-//   // 
 //   const handleSubmit = async (e) => {
 //     e.preventDefault();
 //     if (!validateForm()) return;
@@ -677,7 +668,11 @@ export default ProductAddModal;
 //       <div className="modal-dialog modal-lg modal-dialog-centered">
 //         <div className="modal-content" style={styles.modalContent}>
 //           <div className="modal-header">
-//             <h5 className="modal-title" id="productAddModalLabel" style={styles.title}>
+//             <h5
+//               className="modal-title"
+//               id="productAddModalLabel"
+//               style={styles.title}
+//             >
 //               Add New Product
 //             </h5>
 //             <button type="button" className="btn-close" data-bs-dismiss="modal" />
@@ -687,7 +682,8 @@ export default ProductAddModal;
 //             <form onSubmit={handleSubmit} style={styles.form}>
 //               {/* Product Name */}
 //               <div style={styles.formGroup}>
-//                 <label htmlFor="name" style={styles.label}>Product Name
+//                 <label htmlFor="name" style={styles.label}>
+//                   Product Name
 //                 </label>
 //                 <input
 //                   type="text"
@@ -702,7 +698,8 @@ export default ProductAddModal;
 
 //               {/* Category */}
 //               <div style={styles.formGroup}>
-//                 <label htmlFor="category_id" style={styles.label}>Category
+//                 <label htmlFor="category_id" style={styles.label}>
+//                   Category
 //                 </label>
 //                 <div style={styles.customSelectWrapper}>
 //                   <select
@@ -715,7 +712,9 @@ export default ProductAddModal;
 //                   >
 //                     <option value="">Select Category</option>
 //                     {Object.entries(CATEGORY_MAP).map(([id, label]) => (
-//                       <option key={id} value={id}>{label}</option>
+//                       <option key={id} value={id}>
+//                         {label}
+//                       </option>
 //                     ))}
 //                   </select>
 //                   <span style={styles.dropdownArrow}>▼</span>
@@ -724,8 +723,7 @@ export default ProductAddModal;
 
 //               {/* Photos */}
 //               <div style={styles.formGroup}>
-//                 <label style={styles.label}>Upload Photos (Maximum 3)
-//                 </label>
+//                 <label style={styles.label}>Upload Photos (Maximum 3)</label>
 //                 <div style={styles.photoRow}>
 //                   <label htmlFor="photos" style={styles.browseButton}>
 //                     Browse…
@@ -739,6 +737,14 @@ export default ProductAddModal;
 //                       style={styles.hiddenInput}
 //                     />
 //                   </label>
+
+//                   {/* 🟢 Loader during compression */}
+//                   {isCompressing && (
+//                     <div style={{ color: "#666", fontSize: "0.9rem" }}>
+//                       Compressing images…
+//                     </div>
+//                   )}
+
 //                   {formState.photos.length > 0 && (
 //                     <div style={styles.photoGridInline}>
 //                       {formState.photos.map((file, idx) => (
@@ -751,13 +757,19 @@ export default ProductAddModal;
 //                           onMouseEnter={() => setHoveredIndex(idx)}
 //                           onMouseLeave={() => setHoveredIndex(null)}
 //                         >
-//                           <img src={URL.createObjectURL(file)} alt="Preview" style={styles.photoThumb} />
+//                           <img
+//                             src={URL.createObjectURL(file)}
+//                             alt="Preview"
+//                             style={styles.photoThumb}
+//                           />
 //                           <button
 //                             type="button"
 //                             onClick={() => removePhoto(idx)}
 //                             style={{
 //                               ...styles.photoRemoveCross,
-//                               ...(hoveredIndex === idx ? styles.photoRemoveCrossHover : {}),
+//                               ...(hoveredIndex === idx
+//                                 ? styles.photoRemoveCrossHover
+//                                 : {}),
 //                             }}
 //                           >
 //                             ×
@@ -772,13 +784,11 @@ export default ProductAddModal;
 //               {/* Variants */}
 //               <div style={styles.formGroup}>
 //                 <div style={styles.variantHeaderRow}>
-//                   <label style={styles.label}>Variants
-//                   </label>
+//                   <label style={styles.label}>Variants</label>
 //                   <span style={styles.noteText}>
 //                     Keep size as <b>‘Regular’</b> if there is only one size
 //                   </span>
 
-//                   {/* Toggle buttons */}
 //                   <div style={styles.unitToggleContainer}>
 //                     {["GM", "KG"].map((unit) => (
 //                       <button
@@ -804,7 +814,9 @@ export default ProductAddModal;
 //                       type="text"
 //                       placeholder="Size"
 //                       value={variant.size}
-//                       onChange={(e) => handleVariantChange(idx, "size", e.target.value)}
+//                       onChange={(e) =>
+//                         handleVariantChange(idx, "size", e.target.value)
+//                       }
 //                       onBlur={() => handleSizeBlur(idx)}
 //                       style={styles.variantInput}
 //                     />
@@ -812,7 +824,9 @@ export default ProductAddModal;
 //                       type="text"
 //                       placeholder="Weight"
 //                       value={variant.weight}
-//                       onChange={(e) =>handleVariantChange(idx, "weight", e.target.value)}
+//                       onChange={(e) =>
+//                         handleVariantChange(idx, "weight", e.target.value)
+//                       }
 //                       onBlur={() => handleWeightBlur(idx)}
 //                       style={styles.variantInput}
 //                     />
@@ -839,7 +853,15 @@ export default ProductAddModal;
 
 //               {/* Submit */}
 //               <div style={styles.formGroup}>
-//                 <button type="submit" style={styles.submitBtn}>
+//                 <button
+//                   type="submit"
+//                   style={{
+//                     ...styles.submitBtn,
+//                     ...(submitHover ? styles.submitBtnHover : {}),
+//                   }}
+//                   onMouseEnter={() => setSubmitHover(true)}
+//                   onMouseLeave={() => setSubmitHover(false)}
+//                 >
 //                   Submit Product
 //                 </button>
 //               </div>

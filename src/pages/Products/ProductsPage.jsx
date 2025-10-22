@@ -1,4 +1,4 @@
-// FILE: ProductsPage.jsx
+// FILE: src/pages/ProductsPage/ProductsPage.jsx
 import { useEffect, useRef, useState, useCallback } from "react";
 
 import { productsPageStyles } from "./ProductsPage.styles";
@@ -89,13 +89,9 @@ const ProductsPage = () => {
   };
 
   // Handle Product Added
-  const handleProductAdded = async (newProductData) => {
-    // Option 1: Simply refetch all
-    await loadProducts();
-    setShowAddModal(false);
-
-    // Option 2 (faster): Add to local state
-    // setProducts(prev => [...prev, newProductData.newProduct]);
+  const handleProductAdded = async () => {
+    await loadProducts(); // refetch all products
+    setShowAddModal(false); // close modal
   };
 
   return (

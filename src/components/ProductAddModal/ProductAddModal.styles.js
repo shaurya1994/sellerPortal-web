@@ -244,4 +244,20 @@ export const productAddModalStyles = {
     background: "#2b8841ff",
     transform: "translateY(-1px)",
   },
+  toastWrapper: {
+    position: "fixed",
+    bottom: "24px",
+    right: "24px",
+    zIndex: 3000,
+  },
+  // toastWrapper: {
+  //   position: "fixed",
+  //   bottom: "24px",
+  //   right: "24px",
+  //   zIndex: 4000, // Above modal
+  //   display: "flex",
+  //   justifyContent: "flex-end",
+  //   alignItems: "flex-end",
+  //   pointerEvents: "none", // Prevent blocking clicks
+  // },
 };
