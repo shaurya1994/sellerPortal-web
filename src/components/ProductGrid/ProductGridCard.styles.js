@@ -1,4 +1,4 @@
-// FILE: ProductGridCard.styles.js
+// FILE: src/ProductGrid/ProductGridCard.styles.js
 import { COLORS } from "../../constants/colors";
 
 export const productGridCardStyles = {

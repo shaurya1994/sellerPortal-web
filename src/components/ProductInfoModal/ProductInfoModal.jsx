@@ -1,4 +1,4 @@
-// FILE: src/components/ProductInfoModal.jsx
+// FILE: src/ProductInfoModal/ProductInfoModal.jsx
 import { Modal } from "bootstrap";
 import { useEffect, useRef, useState, useCallback, memo } from "react";
 
@@ -15,15 +15,15 @@ const ProductInfoModal = memo(({ show, onClose, product, onProductRefresh }) => 
   const fileInputRef = useRef(null);
 
   const [editMode, setEditMode] = useState(false);
-  const [existingPhotos, setExistingPhotos] = useState([]); // [{ photo_id, photo_url }]
-  const [removedIds, setRemovedIds] = useState([]); // [photo_id]
-  const [newFiles, setNewFiles] = useState([]); // [File with preview]
+  const [existingPhotos, setExistingPhotos] = useState([]);
+  const [removedIds, setRemovedIds] = useState([]);
+  const [newFiles, setNewFiles] = useState([]);
   const [isUploading, setIsUploading] = useState(false);
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [showLightbox, setShowLightbox] = useState(false);
 
-  // ----- Modal setup -----
+  // ---- Modal setup ----
   useEffect(() => {
     const modalEl = modalRef.current;
     if (!modalEl) return;
@@ -43,7 +43,6 @@ const ProductInfoModal = memo(({ show, onClose, product, onProductRefresh }) => 
     show ? modal.show() : modal.hide();
   }, [show]);
 
-  // Load product photos on change
   useEffect(() => {
     if (product?.photos) setExistingPhotos(product.photos);
   }, [product]);
@@ -75,16 +74,14 @@ const ProductInfoModal = memo(({ show, onClose, product, onProductRefresh }) => 
   const handleKey = useCallback(
     (e) => {
       if (!showLightbox) return;
-      if (e.key === "ArrowRight") {
+      if (["ArrowRight", "ArrowLeft", "Escape"].includes(e.key)) {
         e.preventDefault();
-        handleNext();
-      } else if (e.key === "ArrowLeft") {
-        e.preventDefault();
-        handlePrev();
-      } else if (e.key === "Escape") {
-        e.preventDefault();
-        setShowLightbox(false);
+        e.stopPropagation();
+        e.stopImmediatePropagation();
       }
+      if (e.key === "ArrowRight") handleNext();
+      else if (e.key === "ArrowLeft") handlePrev();
+      else if (e.key === "Escape") setShowLightbox(false);
     },
     [showLightbox, handleNext, handlePrev]
   );
@@ -94,7 +91,7 @@ const ProductInfoModal = memo(({ show, onClose, product, onProductRefresh }) => 
     return () => document.removeEventListener("keydown", handleKey, true);
   }, [handleKey]);
 
-  // ---- Edit mode handlers ----
+  // ---- File handlers ----
   const handleFileChange = async (e) => {
     const files = Array.from(e.target.files || []);
     if (!files.length) return;
@@ -143,9 +140,17 @@ const ProductInfoModal = memo(({ show, onClose, product, onProductRefresh }) => 
     try {
       setIsUploading(true);
       const res = await editProductImages(product.product_id, formData);
-      setExistingPhotos(res.photos || []);
-      onProductRefresh && onProductRefresh({ ...product, photos: res.photos });
-      alert("✅ Images updated successfully!");
+
+      const updatedProduct = { ...product, photos: res.photos || [] };
+      onProductRefresh && onProductRefresh(updatedProduct);
+
+      alert("✅ Images updated successfully");
+
+      // ✅ Close modal programmatically
+      const modalEl = modalRef.current;
+      const modalInstance = Modal.getInstance(modalEl);
+      modalInstance?.hide();
+
       resetEditState();
     } catch (err) {
       console.error("Image update failed:", err);
@@ -153,6 +158,46 @@ const ProductInfoModal = memo(({ show, onClose, product, onProductRefresh }) => 
     } finally {
       setIsUploading(false);
     }
+    
+    // try {
+    //   setIsUploading(true);
+    //   const res = await editProductImages(product.product_id, formData);
+
+    //   console.log("🟢 editProductImages response:", res); // DEBUG
+    //   console.log("🟢 Updated photos received:", res.photos);
+
+    //   // Check if photo URLs are absolute and valid
+    //   if (!res.photos || !Array.isArray(res.photos) || res.photos.length === 0) {
+    //     console.warn("⚠️ No updated photos received from backend");
+    //   } else {
+    //     res.photos.forEach((p, i) =>
+    //       console.log(`Photo ${i + 1}:`, p.photo_url)
+    //     );
+    //   }
+
+    //   // Update modal and parent state
+    //   setExistingPhotos(res.photos || []);
+    //   if (onProductRefresh) {
+    //     const updatedProduct = { ...product, photos: res.photos };
+    //     console.log("🟢 Passing updated product to parent:", updatedProduct);
+    //     onProductRefresh(updatedProduct);
+    //   }
+
+    //   alert("✅ Images updated successfully!");
+    //   resetEditState();
+
+    //   // Close modal
+    //   const modalEl = modalRef.current;
+    //   const modalInstance = Modal.getInstance(modalEl);
+    //   modalInstance?.hide();
+
+    // } catch (err) {
+    //   console.error("❌ editProductImages error:", err);
+    //   alert("❌ Failed to update images.");
+    // } finally {
+    //   setIsUploading(false);
+    // }
+
   };
 
   if (!product) return null;
@@ -226,6 +271,7 @@ const ProductInfoModal = memo(({ show, onClose, product, onProductRefresh }) => 
                   </div>
                 </div>
 
+                {/* ✅ Scoped hover + table (restored effects) */}
                 <style>
                   {`
                     .modal-image-hover:hover {
@@ -610,32 +656,32 @@ export default ProductInfoModal;
 //                   </div>
 //                 </div>
 
-//                 {/* Scoped hover + table (restored effects) */}
-//                 <style>
-//                   {`
-//                     .modal-image-hover:hover {
-//                       transform: scale(1.05);
-//                       box-shadow: 0 6px 12px rgba(0,0,0,0.3);
-//                       transition: transform 0.3s ease, box-shadow 0.3s ease;
-//                     }
-//                     table {
-//                       border-collapse: collapse;
-//                       margin-top: 8px;
-//                       width: 100%;
-//                     }
-//                     table th, table td {
-//                       border: 1px solid #ddd;
-//                       padding: 8px 12px;
-//                       text-align: center;
-//                     }
-//                     table th {
-//                       background-color: #f5f5f5;
-//                       font-weight: 600;
-//                     }
-//                     table tr:nth-child(even) { background-color: #fafafa; }
-//                     table tr:hover { background-color: #f1f1f1; }
-//                   `}
-//                 </style>
+                // {/* Scoped hover + table (restored effects) */}
+                // <style>
+                //   {`
+                //     .modal-image-hover:hover {
+                //       transform: scale(1.05);
+                //       box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+                //       transition: transform 0.3s ease, box-shadow 0.3s ease;
+                //     }
+                //     table {
+                //       border-collapse: collapse;
+                //       margin-top: 8px;
+                //       width: 100%;
+                //     }
+                //     table th, table td {
+                //       border: 1px solid #ddd;
+                //       padding: 8px 12px;
+                //       text-align: center;
+                //     }
+                //     table th {
+                //       background-color: #f5f5f5;
+                //       font-weight: 600;
+                //     }
+                //     table tr:nth-child(even) { background-color: #fafafa; }
+                //     table tr:hover { background-color: #f1f1f1; }
+                //   `}
+                // </style>
 //               </>
 //             ) : (
 //               <>

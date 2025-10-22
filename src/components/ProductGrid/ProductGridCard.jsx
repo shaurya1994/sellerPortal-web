@@ -84,7 +84,7 @@ const ProductGridCard = ({ product, cardWidth = 320 }) => {
           </div>
         )}
 
-        <div className="carousel-inner">
+        {/* <div className="carousel-inner">
           {imageList.map((photo, index) => (
             <div
               key={index}
@@ -104,6 +104,57 @@ const ProductGridCard = ({ product, cardWidth = 320 }) => {
                   style={{
                     ...productGridCardStyles.placeholderBox,
                     height: `${imageHeight}px`,
+                  }}
+                >
+                  <span>No Image Available</span>
+                </div>
+              )}
+            </div>
+          ))}
+        </div> */}
+        <div className="carousel-inner">
+          {imageList.map((photo, index) => (
+            <div
+              key={index}
+              className={`carousel-item ${index === 0 ? "active" : ""}`}
+              style={{ height: `${imageHeight}px` }} // reserve height
+            >
+              {photo.photo_url ? (
+                <img
+                  src={photo.photo_url}
+                  alt={`${name} image ${index + 1}`}
+                  style={{
+                    ...productGridCardStyles.carouselImg,
+                    height: "100%",
+                    width: "100%",
+                    objectFit: "cover",
+                    display: "block",
+                  }}
+                  onError={(e) => {
+                    // fallback if image fails to load
+                    e.target.style.display = "none";
+                    e.target.insertAdjacentHTML(
+                      "afterend",
+                      `<div style="
+                        width:100%;
+                        height:100%;
+                        background-color:#e9ecef;
+                        display:flex;
+                        align-items:center;
+                        justify-content:center;
+                        color:#6c757d;
+                        font-size:14px;
+                        font-weight:500;">
+                        Image not available
+                      </div>`
+                    );
+                  }}
+                />
+              ) : (
+                <div
+                  style={{
+                    ...productGridCardStyles.placeholderBox,
+                    height: "100%",
                   }}
                 >
                   <span>No Image Available</span>
