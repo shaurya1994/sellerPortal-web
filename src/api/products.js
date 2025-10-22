@@ -3,26 +3,26 @@ import api from "./axios";
 
 // Fetching products based on status
 // If parameters are needed to be passed
-export const fetchSellerProducts = async (status = "approved") => {
-  try {
-    const response = await api.get(`/seller/my-products?status=${status}`);
-    return response.data;
-  } catch (error) {
-    console.error("Error fetching products:", error.response || error);
-    throw error;
-  }
-};
-
-// Fetching all products uploaded by seller
-// export const fetchSellerProducts = async () => {
+// export const fetchSellerProducts = async (status = "approved") => {
 //   try {
-//     const response = await api.get(`/seller/my-products`);
+//     const response = await api.get(`/seller/my-products?status=${status}`);
 //     return response.data;
 //   } catch (error) {
 //     console.error("Error fetching products:", error.response || error);
 //     throw error;
 //   }
 // };
+
+// Fetching all products uploaded by seller
+export const fetchSellerProducts = async () => {
+  try {
+    const response = await api.get(`/seller/my-products`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching products:", error.response || error);
+    throw error;
+  }
+};
 
 // Adding new product
 // export const addSellerProduct = async (formData) => {

@@ -1,66 +1,61 @@
-// FILE: ProductAddModal.styles.js
+// FILE: src/components/ProductAddModal/ProductAddModal.styles.js
 import { COLORS } from "../../constants/colors";
 
 export const productAddModalStyles = {
   modalContent: {
-    borderRadius: "10px",
+    borderRadius: "12px",
     overflow: "hidden",
+    border: "none",
+    boxShadow: "0 8px 24px rgba(0,0,0,0.15)",
   },
-
   modalBody: {
-    padding: "20px 24px",
+    backgroundColor: "#fafafa",
+    padding: "24px 28px",
     maxHeight: "80vh",
     overflowY: "auto",
+    scrollbarWidth: "none",
   },
-
   title: {
     margin: 0,
     fontSize: "1.35rem",
     fontWeight: 700,
     color: COLORS.text,
-    lineHeight: 1.15,
+    lineHeight: 1.2,
   },
-
   form: {
     display: "flex",
     flexDirection: "column",
-    gap: "16px",
+    gap: "18px",
   },
-
   formGroup: {
     display: "flex",
     flexDirection: "column",
     gap: "8px",
     position: "relative",
-    marginBottom: "10px",
+    marginBottom: "12px",
   },
-
   label: {
     fontSize: "1rem",
     fontWeight: 600,
     color: COLORS.text,
     paddingBottom: "4px",
-    display: "inline-block",
   },
-
   input: {
     fontSize: "1rem",
     padding: "8px 12px",
     borderRadius: "6px",
-    border: `1.5px solid ${COLORS.border || "#ccc"}`,
+    border: `1.5px solid ${COLORS.border}`,
     outline: "none",
-    transition: "border-color 0.2s",
+    transition: "border-color 0.2s ease",
   },
-
   customSelectWrapper: {
     position: "relative",
     width: "100%",
   },
-
   customSelect: {
     appearance: "none",
     width: "100%",
-    padding: "8px 12px",
+    padding: "10px 12px",
     border: `1.5px solid ${COLORS.primary}`,
     borderRadius: "6px",
     backgroundColor: "#fff",
@@ -68,7 +63,6 @@ export const productAddModalStyles = {
     cursor: "pointer",
     fontSize: "1rem",
   },
-
   dropdownArrow: {
     position: "absolute",
     right: "12px",
@@ -78,26 +72,29 @@ export const productAddModalStyles = {
     color: COLORS.primary,
     fontSize: "0.8rem",
   },
-
+  // --- PHOTO SECTION ---
   photoRow: {
     display: "flex",
     alignItems: "center",
-    gap: "10px",
     flexWrap: "wrap",
+    gap: "12px",
   },
-
   browseButton: {
     background: COLORS.primary,
     color: "#fff",
-    padding: "8px 14px",
+    padding: "9px 16px",
     borderRadius: "6px",
     fontSize: "0.95rem",
+    fontWeight: 500,
     cursor: "pointer",
     border: "none",
     position: "relative",
-    overflow: "hidden",
+    transition: "background-color 0.25s ease, transform 0.2s ease",
   },
-
+  browseButtonHover: {
+    background: COLORS.primaryDark,
+    transform: "translateY(-1px)",
+  },
   hiddenInput: {
     position: "absolute",
     left: 0,
@@ -107,46 +104,42 @@ export const productAddModalStyles = {
     width: "100%",
     height: "100%",
   },
-
   photoGridInline: {
     display: "flex",
     gap: "10px",
     flexWrap: "wrap",
   },
-
   photoBox: {
     position: "relative",
     width: "70px",
     height: "70px",
-    borderRadius: "6px",
-    border: `2px solid ${COLORS.primary}`,
+    borderRadius: "8px",
+    border: `2px solid ${COLORS.border}`,
     overflow: "hidden",
-    transition: "transform 0.3s ease, box-shadow 0.3s ease",
+    backgroundColor: "#f2f2f2",
+    transition: "transform 0.25s ease, box-shadow 0.25s ease",
   },
-
   photoThumb: {
     width: "100%",
     height: "100%",
     objectFit: "cover",
-    transition: "transform 0.3s ease, box-shadow 0.3s ease",
   },
-
   photoBoxHover: {
     transform: "scale(1.05)",
     boxShadow: "0 4px 10px rgba(0, 0, 0, 0.25)",
+    borderColor: COLORS.primary,
   },
-
   photoRemoveCross: {
     position: "absolute",
     top: "4px",
     right: "4px",
-    background: "red",
+    background: COLORS.danger,
     border: "none",
-    color: "#fff",
+    color: "#464646ff",
     borderRadius: "50%",
-    width: "18px",
-    height: "18px",
-    fontSize: "12px",
+    width: "20px",
+    height: "20px",
+    fontSize: "13px",
     fontWeight: 700,
     display: "flex",
     alignItems: "center",
@@ -154,77 +147,72 @@ export const productAddModalStyles = {
     cursor: "pointer",
     lineHeight: "1",
     padding: 0,
+    boxShadow: "0 2px 6px rgba(0,0,0,0.2)",
+    transition: "background-color 0.2s ease, transform 0.2s ease",
   },
-
+  photoRemoveCrossHover: {
+    background: "#b71c1c",
+    transform: "scale(1.1)",
+  },
+  // --- VARIANTS ---
   variantHeaderRow: {
     display: "flex",
     alignItems: "center",
     justifyContent: "space-between",
     flexWrap: "wrap",
-    gap: "10px",
-    marginBottom: "6px",
+    gap: "12px",
   },
-
   noteText: {
     fontSize: "0.85rem",
-    color: COLORS.textLight || "#666",
-    marginLeft: "10px",
+    color: COLORS.textLight,
     flex: "1 1 auto",
   },
-
   unitToggleContainer: {
     display: "flex",
     alignItems: "center",
-    gap: "6px",
+    gap: "8px",
     flexShrink: 0,
   },
-
   unitToggleButton: {
     border: `1.5px solid ${COLORS.primary}`,
     backgroundColor: "#fff",
     color: COLORS.primary,
     fontWeight: 600,
-    padding: "4px 10px",
+    padding: "5px 12px",
     borderRadius: "5px",
     cursor: "pointer",
     transition: "all 0.25s ease",
-    fontSize: "0.8rem",
-    lineHeight: "1",
+    fontSize: "0.85rem",
   },
-
   unitToggleActive: {
     backgroundColor: COLORS.primary,
     color: "#fff",
-    boxShadow: `0 0 0 1px ${COLORS.primaryLight || "rgba(0,0,0,0.1)"}`,
+    boxShadow: `0 0 0 1px ${COLORS.primaryLight}`,
   },
-
   variantRow: {
     display: "flex",
-    gap: "8px",
-    marginBottom: "8px",
+    gap: "10px",
+    marginBottom: "10px",
     alignItems: "center",
   },
-
   variantInput: {
     flex: "1 1 120px",
     fontSize: "1rem",
-    padding: "6px 10px",
+    padding: "8px 10px",
     borderRadius: "6px",
-    border: `1.5px solid ${COLORS.border || "#ccc"}`,
+    border: `1.5px solid ${COLORS.border}`,
+    transition: "border-color 0.2s ease",
   },
-
   variantRemoveBtn: {
     background: "transparent",
-    // border: `1.5px solid ${"#a72c28ff"}`,
     border: `1.5px solid ${COLORS.danger}`,
-    color: "#a72c28ff",
-    // color: COLORS.danger,
+    color: COLORS.danger,
     padding: "6px 10px",
     borderRadius: "4px",
     cursor: "pointer",
     fontSize: "0.85rem",
+    transition: "all 0.2s ease",
   },
-
   addVariantBtn: {
     background: COLORS.primary,
     border: "none",
@@ -234,11 +222,14 @@ export const productAddModalStyles = {
     cursor: "pointer",
     fontWeight: 500,
     fontSize: "0.9rem",
-    alignSelf: "flex-start",
+    transition: "background-color 0.25s ease, transform 0.2s ease",
   },
-
+  addVariantBtnHover: {
+    background: COLORS.primaryDark,
+    transform: "translateY(-1px)",
+  },
   submitBtn: {
-    background: COLORS.success || "#28a745",
+    background: "#b8b8b8ff",
     border: "none",
     color: "#fff",
     padding: "10px 18px",
@@ -247,5 +238,10 @@ export const productAddModalStyles = {
     fontSize: "1rem",
     fontWeight: 600,
     alignSelf: "flex-end",
+    transition: "background-color 0.25s ease, transform 0.2s ease",
+  },
+  submitBtnHover: {
+    background: "#2b8841ff",
+    transform: "translateY(-1px)",
   },
 };
