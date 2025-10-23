@@ -1,37 +1,102 @@
 // FILE: ProductsPage.styles.js
+
 import { COLORS } from "../../constants/colors";
 
 export const productsPageStyles = {
+  // container: {
+  //   width: "100%",
+  //   display: "flex",
+  //   flexDirection: "column",
+  //   alignItems: "center", // Centers inner content
+  //   gap: "1.25rem",
+  // },
+  // gridContainer: {
+  //   width: "100%",
+  //   padding: "0",
+  //   margin: "0",
+  //   display: "grid",
+  //   justifyItems: "start", // Keep cards left-aligned
+  //   alignItems: "start",
+  //   gap: "1.5rem",
+  // },
+// FILE: ProductsPage.styles.js
+
   container: {
     width: "100%",
+    minHeight: "100vh", // ✅ ensures full viewport height
     display: "flex",
     flexDirection: "column",
-    alignItems: "center", // centers inner content
+    alignItems: "center",
     gap: "1.25rem",
+    paddingBottom: "1rem", // spacing from bottom
+    boxSizing: "border-box",
   },
-  // new max-width container for grid + title
+
   gridContainer: {
     width: "100%",
-    padding: "0",
-    margin: "0",
+    flex: "1 1 auto", // ✅ grid grows to fill space
     display: "grid",
-    justifyItems: "start", // keep cards left-aligned
+    justifyItems: "start",
     alignItems: "start",
     gap: "1.5rem",
+    padding: "0",
+    margin: "0",
   },
+
+  paginationRow: {
+    width: "100%",
+    display: "flex",
+    justifyContent: "center",
+    marginTop: "auto", // ✅ pushes to bottom
+    paddingBottom: "1rem", // some breathing room
+  },
+
+  paginationContainer: {
+    display: "flex",
+    flexWrap: "wrap",
+    justifyContent: "center",
+    gap: "0.35rem",
+    alignItems: "center",
+    maxWidth: "90vw",
+  },
+
+  paginationBtn: {
+    minWidth: "38px",
+    padding: "7px 10px",
+    borderRadius: "8px",
+    border: `1px solid ${COLORS.border}`,
+    background: "transparent",
+    color: COLORS.text,
+    cursor: "pointer",
+    fontWeight: 600,
+    fontSize: "0.95rem",
+    transition: "all 0.15s ease",
+  },
+
+  paginationBtnActive: {
+    background: COLORS.primary,
+    color: "#fff",
+    borderColor: COLORS.primary,
+  },
+
+  paginationBtnDisabled: {
+    opacity: 0.45,
+    cursor: "not-allowed",
+  },
+
   headerRow: {
     width: "100%",
     display: "flex",
-    justifyContent: "flex-start",  // ✅ Left-align “My Products”
+    justifyContent: "flex-start",  // Left-align “My Products”
     alignItems: "center",
     marginBottom: "0.75rem",
-    padding: "0",                 // Match grid start point
+    padding: "0",  // Match grid start point
   },
   headerLeft: {
     flex: "1 1 auto",
     paddingLeft: "5px"
   },
-  // ✏️ clean underline with slightly pointed ends
+  // Clean underline with slightly pointed ends
   titleWrapper: {
     position: "relative",
     display: "inline-block",
@@ -55,43 +120,100 @@ export const productsPageStyles = {
     background: `linear-gradient(90deg, transparent 0%, ${COLORS.primary} 15%, ${COLORS.primary} 85%, transparent 100%)`,
     borderRadius: "2px",
   },
-  paginationRow: {
-    width: "100%",
+
+  // Testing search
+  filterBar: {
     display: "flex",
-    justifyContent: "center",
-    marginTop: "1rem",
-    marginBottom: "0.5rem",
-  },
-  paginationContainer: {
-    display: "flex",
-    flexWrap: "wrap",
-    justifyContent: "center",
-    gap: "0.35rem",
     alignItems: "center",
-    maxWidth: "90vw",
+    gap: "0.75rem",
+    justifyContent: "center",
+    flexWrap: "wrap",
+    paddingRight: "10px",
   },
-  paginationBtn: {
-    minWidth: "38px",
-    padding: "7px 10px",
-    borderRadius: "8px",
-    border: `1px solid ${COLORS.border}`,
-    background: "transparent",
+
+  searchInput: {
+    padding: "8px 12px",
+    minWidth: "220px",
+    border: `1.5px solid ${COLORS.primary}`,
+    borderRadius: "6px",
+    outline: "none",
+    fontSize: "0.95rem",
+    color: COLORS.text,
+    backgroundColor: COLORS.white,
+    boxShadow: `0 0 0 2px transparent`,
+    transition: "all 0.2s ease",
+  },
+    
+  customSelectWrapper: {
+    position: "relative",
+    width: "160px", // ✅ Not 100%, compact
+  },
+
+  customSelect: {
+    appearance: "none",
+    width: "100%",
+    padding: "8px 12px",
+    border: `1.5px solid ${COLORS.primary}`,
+    borderRadius: "6px",
+    backgroundColor: COLORS.white,
     color: COLORS.text,
     cursor: "pointer",
-    fontWeight: 600,
     fontSize: "0.95rem",
-    transition: "all 0.15s ease",
   },
-  paginationBtnActive: {
-    background: COLORS.primary,
-    color: "#fff",
-    borderColor: COLORS.primary,
+
+  dropdownArrow: {
+    position: "absolute",
+    right: "10px",
+    top: "50%",
+    transform: "translateY(-50%)",
+    pointerEvents: "none",
+    color: COLORS.primary,
+    fontSize: "0.75rem",
   },
-  paginationBtnDisabled: {
-    opacity: 0.45,
-    cursor: "not-allowed",
+
+  // Focus state for both
+  searchInputFocus: {
+    borderColor: COLORS.text,
+    boxShadow: `0 0 0 2px ${COLORS.border}`,
   },
-  // New
+
+
+  // paginationRow: {
+  //   width: "100%",
+  //   display: "flex",
+  //   justifyContent: "center",
+  //   marginTop: "1rem",
+  //   marginBottom: "0.5rem",
+  // },
+  // paginationContainer: {
+  //   display: "flex",
+  //   flexWrap: "wrap",
+  //   justifyContent: "center",
+  //   gap: "0.35rem",
+  //   alignItems: "center",
+  //   maxWidth: "90vw",
+  // },
+  // paginationBtn: {
+  //   minWidth: "38px",
+  //   padding: "7px 10px",
+  //   borderRadius: "8px",
+  //   border: `1px solid ${COLORS.border}`,
+  //   background: "transparent",
+  //   color: COLORS.text,
+  //   cursor: "pointer",
+  //   fontWeight: 600,
+  //   fontSize: "0.95rem",
+  //   transition: "all 0.15s ease",
+  // },
+  // paginationBtnActive: {
+  //   background: COLORS.primary,
+  //   color: "#fff",
+  //   borderColor: COLORS.primary,
+  // },
+  // paginationBtnDisabled: {
+  //   opacity: 0.45,
+  //   cursor: "not-allowed",
+  // },
   networkErrorContainer: {
     width: "100%",
     minHeight: "50vh",
@@ -154,7 +276,6 @@ export const productsPageStyles = {
     textAlign: "center",
     color: COLORS.text,
   },
-
   loadingSpinner: {
     width: "42px",
     height: "42px",
@@ -164,14 +285,13 @@ export const productsPageStyles = {
     animation: "spin 1s linear infinite",
     marginBottom: "1rem",
   },
-
   loadingText: {
     fontSize: "1.25rem",
     fontWeight: 600,
     color: COLORS.textLight,
   },
-  // Till Here
 
+  // Responsive
   // small-screen adjustments
   "@media (max-width: 768px)": {
     paginationBtn: {

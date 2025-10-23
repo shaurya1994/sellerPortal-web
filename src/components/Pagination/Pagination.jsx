@@ -1,4 +1,5 @@
-// FILE: Pagination.jsx
+// FILE: src/components/Pagination/Pagination.jsx
+
 const Pagination = ({ current = 1, total = 1, onChange = () => {}, styles = {} }) => {
   const pages = [];
 

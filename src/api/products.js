@@ -1,11 +1,10 @@
 // src/api/products.js
 import api from "./axios";
 
-// Fetching products based on status
-// If parameters are needed to be passed
-// export const fetchSellerProducts = async (status = "approved") => {
+// Fetching all products uploaded by seller
+// export const fetchSellerProducts = async () => {
 //   try {
-//     const response = await api.get(`/seller/my-products?status=${status}`);
+//     const response = await api.get(`/seller/my-products`);
 //     return response.data;
 //   } catch (error) {
 //     console.error("Error fetching products:", error.response || error);
@@ -13,13 +12,30 @@ import api from "./axios";
 //   }
 // };
 
-// Fetching all products uploaded by seller
-export const fetchSellerProducts = async () => {
+// Fetching products uploaded by seller (Paginated)
+export const fetchSellerProducts = async ({
+  page = 1,
+  limit = 24,
+  search = "",
+  category_id = "",
+  // status = "",
+  // status = "pending",
+  // status = "approved",
+  // status = "rejected",
+} = {}) => {
   try {
-    const response = await api.get(`/seller/my-products`);
-    return response.data;
+    const response = await api.get(`/seller/my-products-paginated`, {
+      params: {
+        page,
+        limit,
+        search: search || undefined,
+        category_id: category_id || undefined,
+        status: status || undefined,
+      },
+    });
+    return response.data; // { message, data, meta }
   } catch (error) {
-    console.error("Error fetching products:", error.response || error);
+    console.error("Error fetching paginated products:", error.response || error);
     throw error;
   }
 };

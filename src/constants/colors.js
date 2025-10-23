@@ -109,7 +109,7 @@ export const THEMES = {
   mint: mintTheme,
 };
 
-// 👇 set default theme here
+// Set default theme here
 export const COLORS = THEMES.midnight;
 
 // export const THEMES = {
