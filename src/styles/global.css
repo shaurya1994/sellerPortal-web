@@ -2,3 +2,6 @@ body {
   background-color: #f8f9fa;
   font-family: "Inter", "Segoe UI", Arial, sans-serif;
 }
+/* // Append this animation keyframe globally using style tag or CSS file: */
+@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+

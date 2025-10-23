@@ -2,12 +2,14 @@
 import { Modal } from "bootstrap";
 import { useState, useEffect, useRef, memo } from "react";
 
-import { CATEGORY_MAP } from "../../constants/categoryMap";
 import { productAddModalStyles as styles } from "./ProductAddModal.styles";
 
-import { addSellerProduct } from "../../api/products";
+import { CATEGORY_MAP } from "../../constants/categoryMap";
 import { compressImages } from "../../utils/imageCompressor";
 import ToastBanner from "../ToastBanner/ToastBanner";
+
+// API Calls
+import { addSellerProduct } from "../../api/products";
 
 const MAX_PHOTOS = 3;
 
