@@ -1,4 +1,5 @@
-// FILE: categoryMap.js
+// FILE: src/constants/categoryMap.js
+
 export const CATEGORY_MAP = {
   1: "Mortise Lock",
   2: "Main Door Handle",
