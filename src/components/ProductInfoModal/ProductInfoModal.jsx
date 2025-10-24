@@ -94,8 +94,28 @@ const ProductInfoModal = memo(({ show, onClose, product, onProductRefresh }) => 
     setCurrentIndex((i) => (i - 1 + combinedList.length) % combinedList.length);
   }, [combinedList.length]);
 
+  // const handleKey = useCallback(
+  //   (e) => {
+  //     if (showLightbox) {
+  //       if (["ArrowRight", "ArrowLeft", "Escape"].includes(e.key)) {
+  //         e.preventDefault();
+  //         e.stopPropagation();
+  //       }
+  //       if (e.key === "ArrowRight") handleNext();
+  //       else if (e.key === "ArrowLeft") handlePrev();
+  //       else if (e.key === "Escape") {
+  //         // fade out effect
+  //         setLightboxVisible(false);
+  //         setTimeout(() => setShowLightbox(false), 200);
+  //       }
+  //     }
+  //   },
+  //   [showLightbox, handleNext, handlePrev]
+  // );
+  
   const handleKey = useCallback(
     (e) => {
+      // If Lightbox is open, handle its controls first
       if (showLightbox) {
         if (["ArrowRight", "ArrowLeft", "Escape"].includes(e.key)) {
           e.preventDefault();
@@ -104,10 +124,19 @@ const ProductInfoModal = memo(({ show, onClose, product, onProductRefresh }) => 
         if (e.key === "ArrowRight") handleNext();
         else if (e.key === "ArrowLeft") handlePrev();
         else if (e.key === "Escape") {
-          // fade out effect
+          // Fade out the lightbox
           setLightboxVisible(false);
-          setTimeout(() => setShowLightbox(false), 200);
+          setTimeout(() => {
+            setShowLightbox(false);
+          }, 200);
         }
+        return; // prevent modal from reacting while lightbox is open
+      }
+
+      // When Lightbox is closed → ESC closes the modal normally
+      if (e.key === "Escape" && !showLightbox) {
+        const modalInstance = Modal.getInstance(modalRef.current);
+        modalInstance?.hide();
       }
     },
     [showLightbox, handleNext, handlePrev]
