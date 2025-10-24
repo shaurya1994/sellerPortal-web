@@ -1,13 +1,18 @@
-// FILE: src/ProductInfoModal/ProductInfoModal.jsx
+// FILE: src/components/ProductInfoModal/ProductInfoModal.jsx
+
 import { Modal } from "bootstrap";
-import { useEffect, useRef, useState, useCallback, memo } from "react";
+import {
+  useEffect,
+  useRef,
+  useState,
+  useCallback,
+  useMemo,
+  memo,
+} from "react";
 
 import { productInfoModalStyles as styles } from "./ProductInfoModal.styles";
-
 import { getCategoryName } from "../../constants/categoryMap";
 import { compressImages } from "../../utils/imageCompressor";
-
-// API Calls
 import { editProductImages } from "../../api/products";
 
 const MAX_PHOTOS = 3;
@@ -22,72 +27,88 @@ const ProductInfoModal = memo(({ show, onClose, product, onProductRefresh }) => 
   const [removedIds, setRemovedIds] = useState([]);
   const [newFiles, setNewFiles] = useState([]);
   const [isUploading, setIsUploading] = useState(false);
-  const [isCompressing, setIsCompressing] = useState(false); // ✅ new state
+  const [isCompressing, setIsCompressing] = useState(false);
   const [showLightbox, setShowLightbox] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [lightboxVisible, setLightboxVisible] = useState(false); // for fade animation
 
-  // ---- Modal setup ----
+  // -------------------- Modal Setup --------------------
   useEffect(() => {
     const modalEl = modalRef.current;
     if (!modalEl) return;
-    const modal = Modal.getOrCreateInstance(modalEl, { backdrop: true, keyboard: true });
+
+    const modal = Modal.getOrCreateInstance(modalEl, {
+      backdrop: true,
+      keyboard: false, // disable Bootstrap modal ESC handling
+    });
 
     const handleHidden = () => {
-      document.activeElement.blur(); // prevent aria-hidden focus warning
-      onClose && onClose();
+      document.activeElement.blur();
+      onClose?.();
       resetEditState();
     };
 
     modalEl.addEventListener("hidden.bs.modal", handleHidden);
-    return () => modalEl.removeEventListener("hidden.bs.modal", handleHidden);
-  }, [onClose]);
-
-  useEffect(() => {
-    const modalEl = modalRef.current;
-    if (!modalEl) return;
-    const modal = Modal.getOrCreateInstance(modalEl);
     show ? modal.show() : modal.hide();
-  }, [show]);
 
+    return () => {
+      modalEl.removeEventListener("hidden.bs.modal", handleHidden);
+    };
+  }, [show, onClose]);
+
+  // -------------------- Product Data --------------------
   useEffect(() => {
     if (product?.photos) setExistingPhotos(product.photos);
   }, [product]);
 
-  const resetEditState = () => {
+  const resetEditState = useCallback(() => {
     setEditMode(false);
     setRemovedIds([]);
     newFiles.forEach((f) => f.preview && URL.revokeObjectURL(f.preview));
     setNewFiles([]);
-  };
+  }, [newFiles]);
 
-  // ---- Lightbox handlers ----
-  const visibleExisting = existingPhotos.filter((p) => !removedIds.includes(p.photo_id));
-  const combinedList = [
-    ...visibleExisting.map((p) => ({ src: p.photo_url })),
-    ...newFiles.map((f) => ({ src: f.preview })),
-  ];
+  // -------------------- Image Lists --------------------
+  const visibleExisting = useMemo(
+    () => existingPhotos.filter((p) => !removedIds.includes(p.photo_id)),
+    [existingPhotos, removedIds]
+  );
 
+  const combinedList = useMemo(
+    () => [
+      ...visibleExisting.map((p) => ({ src: p.photo_url })),
+      ...newFiles.map((f) => ({ src: f.preview })),
+    ],
+    [visibleExisting, newFiles]
+  );
+
+  const totalImages = visibleExisting.length + newFiles.length;
+  const currentImage = combinedList[currentIndex]?.src ?? null;
+
+  // -------------------- Lightbox Logic --------------------
   const handleNext = useCallback(() => {
-    if (combinedList.length > 0)
-      setCurrentIndex((i) => (i + 1) % combinedList.length);
+    setCurrentIndex((i) => (i + 1) % combinedList.length);
   }, [combinedList.length]);
 
   const handlePrev = useCallback(() => {
-    if (combinedList.length > 0)
-      setCurrentIndex((i) => (i - 1 + combinedList.length) % combinedList.length);
+    setCurrentIndex((i) => (i - 1 + combinedList.length) % combinedList.length);
   }, [combinedList.length]);
 
   const handleKey = useCallback(
     (e) => {
-      if (!showLightbox) return;
-      if (["ArrowRight", "ArrowLeft", "Escape"].includes(e.key)) {
-        e.preventDefault();
-        e.stopPropagation();
-        e.stopImmediatePropagation();
+      if (showLightbox) {
+        if (["ArrowRight", "ArrowLeft", "Escape"].includes(e.key)) {
+          e.preventDefault();
+          e.stopPropagation();
+        }
+        if (e.key === "ArrowRight") handleNext();
+        else if (e.key === "ArrowLeft") handlePrev();
+        else if (e.key === "Escape") {
+          // fade out effect
+          setLightboxVisible(false);
+          setTimeout(() => setShowLightbox(false), 200);
+        }
       }
-      if (e.key === "ArrowRight") handleNext();
-      else if (e.key === "ArrowLeft") handlePrev();
-      else if (e.key === "Escape") setShowLightbox(false);
     },
     [showLightbox, handleNext, handlePrev]
   );
@@ -97,12 +118,12 @@ const ProductInfoModal = memo(({ show, onClose, product, onProductRefresh }) => 
     return () => document.removeEventListener("keydown", handleKey, true);
   }, [handleKey]);
 
-  // ---- File handlers ----
+  // -------------------- File Handlers --------------------
   const handleFileChange = async (e) => {
     const files = Array.from(e.target.files || []);
     if (!files.length) return;
 
-    const remaining = MAX_PHOTOS - (visibleExisting.length + newFiles.length);
+    const remaining = MAX_PHOTOS - totalImages;
     if (files.length > remaining) {
       alert(`You can add only ${remaining} more image(s).`);
       e.target.value = "";
@@ -110,16 +131,16 @@ const ProductInfoModal = memo(({ show, onClose, product, onProductRefresh }) => 
     }
 
     try {
-      setIsCompressing(true); // ✅ start loader
+      setIsCompressing(true);
       const compressed = await compressImages(files);
-      const withPreview = compressed.map((f) =>
-        Object.assign(f, { preview: URL.createObjectURL(f) })
+      const withPreview = compressed.map((file) =>
+        Object.assign(file, { preview: URL.createObjectURL(file) })
       );
       setNewFiles((prev) => [...prev, ...withPreview]);
     } catch {
       alert("Image compression failed.");
     } finally {
-      setIsCompressing(false); // ✅ stop loader
+      setIsCompressing(false);
       e.target.value = "";
     }
   };
@@ -138,20 +159,23 @@ const ProductInfoModal = memo(({ show, onClose, product, onProductRefresh }) => 
     setNewFiles((prev) => prev.filter((_, i) => i !== index));
   };
 
-  // ---- Toast helper ----
+  // -------------------- Toast --------------------
   const showToast = (message, type = "success") => {
-    if (!toastRef.current) return;
+    const el = toastRef.current;
+    if (!el) return;
 
-    toastRef.current.textContent = message;
-    toastRef.current.style.backgroundColor = type === "success" ? "#28a745" : "#dc3545";
-    toastRef.current.style.display = "block";
+    el.textContent = message;
+    el.style.backgroundColor = type === "success" ? "#28a745" : "#dc3545";
+    el.style.opacity = "1";
+    el.style.display = "block";
 
     setTimeout(() => {
-      toastRef.current.style.display = "none";
+      el.style.opacity = "0";
+      setTimeout(() => (el.style.display = "none"), 300);
     }, 2500);
   };
 
-  // ---- Save Changes ----
+  // -------------------- Save Changes --------------------
   const handleSaveChanges = async () => {
     if (!removedIds.length && !newFiles.length) return;
 
@@ -163,15 +187,13 @@ const ProductInfoModal = memo(({ show, onClose, product, onProductRefresh }) => 
       setIsUploading(true);
       const res = await editProductImages(product.product_id, formData);
 
-      const updatedProduct = { ...product, photos: res.photos || [] };
-      onProductRefresh && onProductRefresh(updatedProduct);
-
-      // ✅ Toast success instead of alert
-      showToast("✅ Images updated successfully!");
-
-      // Keep modal open for preview
-      resetEditState();
+      // Fix: directly use updated list to avoid flicker
       setExistingPhotos(res.photos || []);
+      resetEditState();
+
+      onProductRefresh?.({ ...product, photos: res.photos || [] });
+
+      showToast("✅ Images updated successfully!");
       modalRef.current?.scrollTo({ top: 0, behavior: "smooth" });
     } catch (err) {
       console.error("Image update failed:", err);
@@ -181,17 +203,17 @@ const ProductInfoModal = memo(({ show, onClose, product, onProductRefresh }) => 
     }
   };
 
+  // -------------------- Render --------------------
   if (!product) return null;
 
   const { name, category_id, variants = [] } = product;
   const hasSize = variants.some((v) => v.size);
   const hasWeight = variants.some((v) => v.weight);
-  const currentImage = combinedList[currentIndex]?.src ?? null;
-  const totalImages = visibleExisting.length + newFiles.length;
   const disableSave = !removedIds.length && !newFiles.length;
 
   return (
     <>
+      {/* ---------- MODAL ---------- */}
       <div className="modal fade" ref={modalRef} tabIndex="-1" aria-hidden="true">
         <div className="modal-dialog modal-lg modal-dialog-centered">
           <div className="modal-content" style={styles.modalContent}>
@@ -205,16 +227,17 @@ const ProductInfoModal = memo(({ show, onClose, product, onProductRefresh }) => 
             <div className="modal-body" style={styles.modalBody}>
               {!editMode ? (
                 <>
-                  {/* --- View Mode --- */}
+                  {/* ---------- VIEW MODE ---------- */}
                   <div style={styles.container}>
                     <div style={styles.imageSection}>
-                      {currentImage ? (
+                      {visibleExisting.length > 0 ? (
                         <img
-                          src={currentImage}
+                          src={visibleExisting[0].photo_url}
                           alt={name}
                           style={styles.mainImage}
                           onClick={() => {
                             setShowLightbox(true);
+                            setLightboxVisible(true);
                             setCurrentIndex(0);
                           }}
                           className="modal-image-hover"
@@ -253,6 +276,7 @@ const ProductInfoModal = memo(({ show, onClose, product, onProductRefresh }) => 
                     </div>
                   </div>
 
+                  {/* Keep your existing hover and table CSS */}
                   <style>
                     {`
                       .modal-image-hover:hover {
@@ -281,11 +305,12 @@ const ProductInfoModal = memo(({ show, onClose, product, onProductRefresh }) => 
                 </>
               ) : (
                 <>
-                  {/* --- Edit Mode --- */}
+                  {/* ---------- EDIT MODE ---------- */}
                   <div style={styles.editSection}>
                     <h5 style={styles.editTitle}>
                       Edit Images ({totalImages}/{MAX_PHOTOS})
                     </h5>
+
                     <div style={styles.imageGrid}>
                       {visibleExisting.map((p) => (
                         <div key={p.photo_id} style={styles.imageCard}>
@@ -298,6 +323,7 @@ const ProductInfoModal = memo(({ show, onClose, product, onProductRefresh }) => 
                           </button>
                         </div>
                       ))}
+
                       {newFiles.map((f, i) => (
                         <div key={i} style={styles.imageCard}>
                           <img src={f.preview} alt="new" style={styles.imageThumb} />
@@ -310,7 +336,6 @@ const ProductInfoModal = memo(({ show, onClose, product, onProductRefresh }) => 
                         </div>
                       ))}
 
-                      {/* ✅ Loader for image compression */}
                       {isCompressing && (
                         <div style={{ color: "#666", fontSize: "0.9rem" }}>
                           Compressing images…
@@ -364,9 +389,19 @@ const ProductInfoModal = memo(({ show, onClose, product, onProductRefresh }) => 
         </div>
       </div>
 
-      {/* --- Lightbox --- */}
+      {/* ---------- LIGHTBOX ---------- */}
       {showLightbox && currentImage && (
-        <div style={styles.lightboxOverlay} onClick={() => setShowLightbox(false)}>
+        <div
+          style={{
+            ...styles.lightboxOverlay,
+            opacity: lightboxVisible ? 1 : 0,
+            transition: "opacity 0.2s ease",
+          }}
+          onClick={() => {
+            setLightboxVisible(false);
+            setTimeout(() => setShowLightbox(false), 200);
+          }}
+        >
           {combinedList.length > 1 && (
             <button
               style={{ ...styles.arrowBtn, left: "20px" }}
@@ -398,7 +433,7 @@ const ProductInfoModal = memo(({ show, onClose, product, onProductRefresh }) => 
         </div>
       )}
 
-      {/* ✅ Toast Notification */}
+      {/* ---------- TOAST ---------- */}
       <div ref={toastRef} style={styles.toast}></div>
     </>
   );

@@ -1,4 +1,5 @@
 // FILE: src/components/ProductInfoModal.styles.jsx
+
 import { COLORS } from "../../constants/colors";
 
 export const productInfoModalStyles = {
@@ -53,10 +54,24 @@ export const productInfoModalStyles = {
     fontWeight: 600,
     cursor: "pointer",
   },
-  infoSection: { flex: "1 1 55%", paddingRight: "8px" },
-  name: { marginBottom: "6px", fontWeight: 600, fontSize: "1.1rem" },
-  category: { color: "#666", marginBottom: "10px", fontSize: "0.9rem" },
-  table: { width: "100%", borderCollapse: "collapse" },
+  infoSection: { 
+    flex: "1 1 55%", 
+    paddingRight: "8px" 
+  },
+  name: { 
+    marginBottom: "6px", 
+    fontWeight: 600, 
+    fontSize: "1.1rem" 
+  },
+  category: { 
+    color: "#666", 
+    marginBottom: "10px", 
+    fontSize: "0.9rem" 
+  },
+  table: { 
+    width: "100%", 
+    borderCollapse: "collapse" 
+  },
   lightboxOverlay: {
     position: "fixed",
     top: 0, left: 0, right: 0, bottom: 0,
