@@ -2,6 +2,7 @@
 import { COLORS } from "../../constants/colors";
 
 export const productAddModalStyles = {
+  /* ------------------------------ MODAL ------------------------------ */
   modalContent: {
     borderRadius: "12px",
     overflow: "hidden",
@@ -22,6 +23,8 @@ export const productAddModalStyles = {
     color: COLORS.text,
     lineHeight: 1.2,
   },
+
+  /* ------------------------------ FORM ------------------------------ */
   form: {
     display: "flex",
     flexDirection: "column",
@@ -48,6 +51,8 @@ export const productAddModalStyles = {
     outline: "none",
     transition: "border-color 0.2s ease",
   },
+
+  /* ------------------------------ SELECT ------------------------------ */
   customSelectWrapper: {
     position: "relative",
     width: "100%",
@@ -58,7 +63,7 @@ export const productAddModalStyles = {
     padding: "10px 12px",
     border: `1.5px solid ${COLORS.primary}`,
     borderRadius: "6px",
-    backgroundColor: "#fff",
+    backgroundColor: COLORS.white,
     color: COLORS.text,
     cursor: "pointer",
     fontSize: "1rem",
@@ -72,7 +77,8 @@ export const productAddModalStyles = {
     color: COLORS.primary,
     fontSize: "0.8rem",
   },
-  // --- PHOTO SECTION ---
+
+  /* ------------------------------ PHOTOS ------------------------------ */
   photoRow: {
     display: "flex",
     alignItems: "center",
@@ -81,7 +87,7 @@ export const productAddModalStyles = {
   },
   browseButton: {
     background: COLORS.primary,
-    color: "#fff",
+    color: COLORS.white,
     padding: "9px 16px",
     borderRadius: "6px",
     fontSize: "0.95rem",
@@ -89,10 +95,10 @@ export const productAddModalStyles = {
     cursor: "pointer",
     border: "none",
     position: "relative",
-    transition: "background-color 0.25s ease, transform 0.2s ease",
+    transition: "all 0.25s ease",
   },
   browseButtonHover: {
-    background: COLORS.primaryDark,
+    background: COLORS.text,
     transform: "translateY(-1px)",
   },
   hiddenInput: {
@@ -135,7 +141,7 @@ export const productAddModalStyles = {
     right: "4px",
     background: COLORS.danger,
     border: "none",
-    color: "#464646ff",
+    color: COLORS.white,
     borderRadius: "50%",
     width: "20px",
     height: "20px",
@@ -145,16 +151,17 @@ export const productAddModalStyles = {
     alignItems: "center",
     justifyContent: "center",
     cursor: "pointer",
-    lineHeight: "1",
+    lineHeight: 1,
     padding: 0,
     boxShadow: "0 2px 6px rgba(0,0,0,0.2)",
-    transition: "background-color 0.2s ease, transform 0.2s ease",
+    transition: "all 0.2s ease",
   },
   photoRemoveCrossHover: {
     background: "#b71c1c",
     transform: "scale(1.1)",
   },
-  // --- VARIANTS ---
+
+  /* ------------------------------ VARIANTS ------------------------------ */
   variantHeaderRow: {
     display: "flex",
     alignItems: "center",
@@ -175,7 +182,7 @@ export const productAddModalStyles = {
   },
   unitToggleButton: {
     border: `1.5px solid ${COLORS.primary}`,
-    backgroundColor: "#fff",
+    backgroundColor: COLORS.white,
     color: COLORS.primary,
     fontWeight: 600,
     padding: "5px 12px",
@@ -186,8 +193,8 @@ export const productAddModalStyles = {
   },
   unitToggleActive: {
     backgroundColor: COLORS.primary,
-    color: "#fff",
-    boxShadow: `0 0 0 1px ${COLORS.primaryLight}`,
+    color: COLORS.white,
+    boxShadow: `0 0 0 1px ${COLORS.primary}`,
   },
   variantRow: {
     display: "flex",
@@ -213,51 +220,45 @@ export const productAddModalStyles = {
     fontSize: "0.85rem",
     transition: "all 0.2s ease",
   },
+
+  /* ------------------------------ BUTTONS ------------------------------ */
   addVariantBtn: {
     background: COLORS.primary,
     border: "none",
-    color: "#fff",
+    color: COLORS.white,
     padding: "8px 14px",
     borderRadius: "6px",
     cursor: "pointer",
     fontWeight: 500,
     fontSize: "0.9rem",
-    transition: "background-color 0.25s ease, transform 0.2s ease",
+    transition: "all 0.25s ease",
   },
   addVariantBtnHover: {
-    background: COLORS.primaryDark,
+    background: COLORS.text,
     transform: "translateY(-1px)",
   },
   submitBtn: {
-    background: "#b8b8b8ff",
+    background: COLORS.primary,
     border: "none",
-    color: "#fff",
+    color: COLORS.white,
     padding: "10px 18px",
     borderRadius: "6px",
     cursor: "pointer",
     fontSize: "1rem",
     fontWeight: 600,
     alignSelf: "flex-end",
-    transition: "background-color 0.25s ease, transform 0.2s ease",
+    transition: "all 0.25s ease",
   },
   submitBtnHover: {
-    background: "#2b8841ff",
+    background: COLORS.text,
     transform: "translateY(-1px)",
   },
+
+  /* ------------------------------ TOAST ------------------------------ */
   toastWrapper: {
     position: "fixed",
     bottom: "24px",
     right: "24px",
     zIndex: 3000,
   },
-  // toastWrapper: {
-  //   position: "fixed",
-  //   bottom: "24px",
-  //   right: "24px",
-  //   zIndex: 4000, // Above modal
-  //   display: "flex",
-  //   justifyContent: "flex-end",
-  //   alignItems: "flex-end",
-  //   pointerEvents: "none", // Prevent blocking clicks
-  // },
 };

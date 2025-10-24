@@ -15,7 +15,7 @@ import api from "./axios";
 // Fetching products uploaded by seller (Paginated)
 export const fetchSellerProducts = async ({
   page = 1,
-  limit = 24,
+  limit = "", // 25 products per page from BAL
   search = "",
   category_id = "",
   status = "",
