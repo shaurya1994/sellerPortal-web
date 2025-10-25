@@ -10,7 +10,13 @@ const Header = () => {
       <div className="container-fluid px-4 d-flex justify-content-between align-items-center">
         {/* Left: Logo + Company */}
         <Link className="navbar-brand d-flex align-items-center text-white fw-semibold" to="/">
-          <img src={logo} alt="Logo" style={layoutStyles.logo} />
+
+          <div style={layoutStyles.logoContainer}>
+            <img src={logo} alt="Company Logo" style={layoutStyles.logo} />
+          </div>
+
+          {/* <img src={logo} alt="Logo" style={layoutStyles.logo} /> */}
+
           <span className="d-none d-sm-inline" style={layoutStyles.companyName}>
             Raw Alliance
           </span>

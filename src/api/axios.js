@@ -44,7 +44,7 @@ export default api;
 //       delete config.headers.Authorization;
 //     }
 
-//     // ❗ Don’t force "application/json" on multipart uploads
+//     // Don’t force "application/json" on multipart uploads
 //     if (!(config.data instanceof FormData)) {
 //       config.headers["Content-Type"] = "application/json";
 //     }

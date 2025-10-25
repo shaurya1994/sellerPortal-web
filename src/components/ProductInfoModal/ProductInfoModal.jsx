@@ -94,25 +94,6 @@ const ProductInfoModal = memo(({ show, onClose, product, onProductRefresh }) => 
     setCurrentIndex((i) => (i - 1 + combinedList.length) % combinedList.length);
   }, [combinedList.length]);
 
-  // const handleKey = useCallback(
-  //   (e) => {
-  //     if (showLightbox) {
-  //       if (["ArrowRight", "ArrowLeft", "Escape"].includes(e.key)) {
-  //         e.preventDefault();
-  //         e.stopPropagation();
-  //       }
-  //       if (e.key === "ArrowRight") handleNext();
-  //       else if (e.key === "ArrowLeft") handlePrev();
-  //       else if (e.key === "Escape") {
-  //         // fade out effect
-  //         setLightboxVisible(false);
-  //         setTimeout(() => setShowLightbox(false), 200);
-  //       }
-  //     }
-  //   },
-  //   [showLightbox, handleNext, handlePrev]
-  // );
-  
   const handleKey = useCallback(
     (e) => {
       // If Lightbox is open, handle its controls first
