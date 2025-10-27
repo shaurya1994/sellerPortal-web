@@ -1,4 +1,5 @@
 // src/api/products.js
+
 import api from "./axios";
 
 // Fetching all products uploaded by seller
