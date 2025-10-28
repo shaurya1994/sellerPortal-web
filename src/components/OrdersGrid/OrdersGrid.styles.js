@@ -119,12 +119,30 @@ export const ordersGridStyles = {
     display: "none" 
   },
   /* --- Grid --- */
+  // gridWrapper: {
+  //   width: "100%",
+  //   display: "grid",
+  //   gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))",
+  //   gap: "1.5rem",
+  //   justifyItems: "start", // first card always left aligned
+  // },
+  /* --- Grid --- */
   gridWrapper: {
     width: "100%",
     display: "grid",
-    gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))",
-    gap: "1.5rem",
-    justifyItems: "start", // first card always left aligned
+    gridTemplateColumns: "repeat(3, 1fr)",
+    gap: "1.25rem",
+    justifyItems: "stretch",
+  },
+  '@media (max-width: 1200px)': {
+    gridWrapper: {
+      gridTemplateColumns: "repeat(2, 1fr)",
+    }
+  },
+  '@media (max-width: 768px)': {
+    gridWrapper: {
+      gridTemplateColumns: "1fr",
+    }
   },
   orderCardPlaceholder: {
     width: "100%",
@@ -142,6 +160,7 @@ export const ordersGridStyles = {
   },
   /* --- Empty / Loading States --- */
   loadingContainer: {
+    gridColumn: "1 / -1",
     width: "100%",
     minHeight: "40vh",
     display: "flex",
@@ -178,7 +197,7 @@ export const ordersGridStyles = {
     letterSpacing: "0.2px",
     padding: "1rem",
     gap: "0.5rem",
-  },
-
+    gridColumn: "1 / -1", // Span all columns
+    padding: "3rem 0",
+  }
 };
-
