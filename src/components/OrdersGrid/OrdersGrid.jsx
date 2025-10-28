@@ -1,4 +1,4 @@
-FILE: src/components/OrdersGrid/OrdersGrid.jsx
+// FILE: src/components/OrdersGrid/OrdersGrid.jsx
 
 import { useState, useEffect } from "react";
 import { ordersGridStyles } from "./OrdersGrid.styles";
@@ -15,7 +15,7 @@ const OrdersGrid = ({
   clearSignal = 0,
   onClearDates = () => {},
 }) => {
-  const [orderType, setOrderType] = useState("all");
+  const [orderType, setOrderType] = useState("in-process"); // default changed to "in-process"
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(false);
   const [isNarrow, setIsNarrow] = useState(() => window.innerWidth < 920);
@@ -26,25 +26,20 @@ const OrdersGrid = ({
     return () => window.removeEventListener("resize", onResize);
   }, []);
 
-  // reset orderType when clearSignal changes (Clear button pressed)
+  // reset orderType when clearSignal changes
   useEffect(() => {
-    setOrderType("all");
+    setOrderType("in-process");
   }, [clearSignal]);
 
-  // toast using styles from ordersGridStyles.toastContainer
+  // toast
   const showToast = (msg, color = COLORS.danger, clearDates = false) => {
     const toast = document.createElement("div");
     toast.innerText = msg;
 
-    // apply base toast styles from styles.js
-    const baseStyles = ordersGridStyles.toastContainer || {};
-    Object.assign(toast.style, baseStyles);
-
-    // override bg color if provided
+    Object.assign(toast.style, ordersGridStyles.toastContainer || {});
     toast.style.background = color;
 
     document.body.appendChild(toast);
-    // small reflow to animate
     requestAnimationFrame(() => (toast.style.opacity = "1"));
 
     setTimeout(() => {
@@ -52,10 +47,7 @@ const OrdersGrid = ({
       setTimeout(() => toast.remove(), 300);
     }, 2500);
 
-    if (clearDates) {
-      // instruct parent to clear dates
-      onClearDates();
-    }
+    if (clearDates) onClearDates();
   };
 
   const formatDate = (dateStr) => {
@@ -73,7 +65,6 @@ const OrdersGrid = ({
 
   const loadOrders = async () => {
     if (dateFrom && dateTo && new Date(dateFrom) > new Date(dateTo)) {
-      // show toast and clear page dates (via callback)
       showToast("‘From’ date cannot be greater than ‘To’ date.", COLORS.danger, true);
       return;
     }
@@ -83,19 +74,15 @@ const OrdersGrid = ({
       const res = await fetchSellerOrders({
         date_from: dateFrom || undefined,
         date_to: dateTo || undefined,
-        status: orderType === "all" ? "" : orderType,
+        status: orderType, // no conditional logic needed now
         category_id: selectedCategory || "",
         search: searchInput || "",
         page: 1,
         limit: 25,
       });
       setOrders(res?.data || []);
-      // console.log("🟢 Orders Response:", res);
-
     } catch (err) {
-      // console.error("🔴 Error fetching orders:", err);
-      showToast("Failed to fetch orders. Please check your connection.", COLORS.danger, false);
-    
+      showToast("Failed to fetch orders. Please check your connection.", COLORS.danger);
     } finally {
       setLoading(false);
     }
@@ -135,61 +122,42 @@ const OrdersGrid = ({
     );
   };
 
+  const orderTypes = ["in-process", "delivered"]; // only two options now
+
+  const renderOrderTypeRadios = () => (
+    <div style={ordersGridStyles.radioContainer}>
+      {orderTypes.map((type) => (
+        <label
+          key={type}
+          style={{
+            ...ordersGridStyles.radioLabel,
+            ...(orderType === type ? ordersGridStyles.radioLabelActive : {}),
+          }}
+          onClick={() => setOrderType(type)}
+        >
+          <input
+            type="radio"
+            name="orderType"
+            value={type}
+            checked={orderType === type}
+            onChange={() => setOrderType(type)}
+            style={ordersGridStyles.radioInput}
+          />
+          {type === "in-process" ? "In-Process" : "Delivered"}
+        </label>
+      ))}
+    </div>
+  );
+
   return (
     <div style={ordersGridStyles.container}>
       <div style={ordersGridStyles.dateAndFilterRow}>
         <div style={ordersGridStyles.dateHeader}>{renderDateHeader()}</div>
 
         {!isNarrow ? (
-          <div style={ordersGridStyles.radioAbsolute}>
-            <div style={ordersGridStyles.radioContainer}>
-              {["all", "in-process", "delivered"].map((type) => (
-                <label
-                  key={type}
-                  style={{
-                    ...ordersGridStyles.radioLabel,
-                    ...(orderType === type ? ordersGridStyles.radioLabelActive : {}),
-                  }}
-                  onClick={() => setOrderType(type)}
-                >
-                  <input
-                    type="radio"
-                    name="orderType"
-                    value={type}
-                    checked={orderType === type}
-                    onChange={() => setOrderType(type)}
-                    style={ordersGridStyles.radioInput}
-                  />
-                  {type === "all" ? "All" : type === "in-process" ? "In-Process" : "Delivered"}
-                </label>
-              ))}
-            </div>
-          </div>
+          <div style={ordersGridStyles.radioAbsolute}>{renderOrderTypeRadios()}</div>
         ) : (
-          <div style={ordersGridStyles.radioFlowWrapper}>
-            <div style={ordersGridStyles.radioContainer}>
-              {["all", "in-process", "delivered"].map((type) => (
-                <label
-                  key={type}
-                  style={{
-                    ...ordersGridStyles.radioLabel,
-                    ...(orderType === type ? ordersGridStyles.radioLabelActive : {}),
-                  }}
-                  onClick={() => setOrderType(type)}
-                >
-                  <input
-                    type="radio"
-                    name="orderType"
-                    value={type}
-                    checked={orderType === type}
-                    onChange={() => setOrderType(type)}
-                    style={ordersGridStyles.radioInput}
-                  />
-                  {type === "all" ? "All" : type === "in-process" ? "In-Process" : "Delivered"}
-                </label>
-              ))}
-            </div>
-          </div>
+          <div style={ordersGridStyles.radioFlowWrapper}>{renderOrderTypeRadios()}</div>
         )}
       </div>
 
@@ -201,7 +169,7 @@ const OrdersGrid = ({
             ? {
                 justifyContent: "center",
                 alignItems: "center",
-                minHeight: "50vh", // keep vertical center balance
+                minHeight: "50vh",
               }
             : {}),
         }}
@@ -216,9 +184,7 @@ const OrdersGrid = ({
             No orders found for the selected filters.
           </p>
         ) : (
-          orders.map((order, index) => (
-            <OrdersGridCard key={index} order={order} />
-          ))
+          orders.map((order, index) => <OrdersGridCard key={index} order={order} />)
         )}
       </div>
     </div>
