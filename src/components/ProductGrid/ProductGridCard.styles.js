@@ -62,6 +62,9 @@ export const productGridCardStyles = {
     transition: "background-color 0.2s ease",
     outline: "none",
   },
+  carouselPrevBtnHover: { 
+    backgroundColor: "rgba(127,140,141,0.9)" 
+  },
   carouselNextBtn: {
     width: "55px",
     height: "42px",
@@ -77,9 +80,6 @@ export const productGridCardStyles = {
     cursor: "pointer",
     transition: "background-color 0.2s ease",
     outline: "none",
-  },
-  carouselPrevBtnHover: { 
-    backgroundColor: "rgba(127,140,141,0.9)" 
   },
   carouselNextBtnHover: { 
     backgroundColor: "rgba(127,140,141,0.9)" 

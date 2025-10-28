@@ -1,4 +1,5 @@
 // FILE: src/ProductGrid/ProductGridCard.jsx
+
 import { useState, useEffect } from "react";
 import { productGridCardStyles } from "./ProductGridCard.styles";
 import { COLORS } from "../../constants/colors";

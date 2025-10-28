@@ -1,4 +1,4 @@
-// FILE: src/components/OrdersGrid/OrdersGrid.jsx
+FILE: src/components/OrdersGrid/OrdersGrid.jsx
 
 import { useState, useEffect } from "react";
 import { ordersGridStyles } from "./OrdersGrid.styles";
@@ -50,7 +50,7 @@ const OrdersGrid = ({
     setTimeout(() => {
       toast.style.opacity = "0";
       setTimeout(() => toast.remove(), 300);
-    }, 3000);
+    }, 2500);
 
     if (clearDates) {
       // instruct parent to clear dates
@@ -90,10 +90,12 @@ const OrdersGrid = ({
         limit: 25,
       });
       setOrders(res?.data || []);
-      console.log("🟢 Orders Response:", res);
+      // console.log("🟢 Orders Response:", res);
+
     } catch (err) {
-      console.error("🔴 Error fetching orders:", err);
+      // console.error("🔴 Error fetching orders:", err);
       showToast("Failed to fetch orders. Please check your connection.", COLORS.danger, false);
+    
     } finally {
       setLoading(false);
     }
@@ -108,27 +110,27 @@ const OrdersGrid = ({
     if (formattedFrom && formattedTo) {
       return (
         <p style={ordersGridStyles.dateRangeText}>
-          From <span style={ordersGridStyles.dateHighlight}>{formattedFrom}</span>
+          From: <span style={ordersGridStyles.dateHighlight}>{formattedFrom}</span>
           <span style={ordersGridStyles.separator}>⟶</span>
-          To <span style={ordersGridStyles.dateHighlight}>{formattedTo}</span>
+          To: <span style={ordersGridStyles.dateHighlight}>{formattedTo}</span>
         </p>
       );
     } else if (formattedFrom) {
       return (
         <p style={ordersGridStyles.dateRangeText}>
-          From <span style={ordersGridStyles.dateHighlight}>{formattedFrom}</span>
+          From: <span style={ordersGridStyles.dateHighlight}>{formattedFrom}</span>
         </p>
       );
     } else if (formattedTo) {
       return (
         <p style={ordersGridStyles.dateRangeText}>
-          To <span style={ordersGridStyles.dateHighlight}>{formattedTo}</span>
+          To: <span style={ordersGridStyles.dateHighlight}>{formattedTo}</span>
         </p>
       );
     }
     return (
       <p style={ordersGridStyles.dateRangeText}>
-        Date <span style={ordersGridStyles.dateHighlight}>{formattedToday}</span>
+        Date: <span style={ordersGridStyles.dateHighlight}>{formattedToday}</span>
       </p>
     );
   };
@@ -215,20 +217,10 @@ const OrdersGrid = ({
           </p>
         ) : (
           orders.map((order, index) => (
-            <OrdersGridCard key={index} order={order} />            
-            // <div key={index} style={ordersGridStyles.orderCardPlaceholder}>
-            //   <p style={{ color: COLORS.textLight, margin: 0 }}>
-            //     <strong style={{ color: COLORS.text }}>{order.product_name}</strong>
-            //     <br />
-            //     Order ID:{" "}
-            //     <span style={{ color: COLORS.primary }}>{order.group_id}</span>
-            //   </p>
-            // </div>
-
+            <OrdersGridCard key={index} order={order} />
           ))
         )}
       </div>
-      
     </div>
   );
 };
