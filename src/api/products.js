@@ -16,19 +16,16 @@ import api from "./axios";
 // Fetching products uploaded by seller (Paginated)
 export const fetchSellerProducts = async ({
   page = 1,
-  limit = "", // 25 products per page from BAL
+  limit = 24, // Default to 24 (As per current design)
   search = "",
   category_id = "",
   status = "",
-  // status = "pending",
-  // status = "approved",
-  // status = "rejected",
 } = {}) => {
   try {
     const response = await api.get(`/seller/my-products-paginated`, {
       params: {
         page,
-        limit,
+        limit: Number(limit) || 24, // Ensure it's always a number
         search: search || undefined,
         category_id: category_id || undefined,
         status: status || undefined,
@@ -40,6 +37,7 @@ export const fetchSellerProducts = async ({
     throw error;
   }
 };
+
 
 // Adding new product
 // export const addSellerProduct = async (formData) => {

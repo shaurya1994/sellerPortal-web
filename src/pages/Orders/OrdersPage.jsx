@@ -7,23 +7,38 @@ import { ordersPageStyles } from "./OrdersPage.styles";
 import { CATEGORY_MAP } from "../../constants/categoryMap";
 
 import OrdersGrid from "../../components/OrdersGrid/OrdersGrid";
+import Pagination from "../../components/Pagination/Pagination";
 
 const OrdersPage = () => {
+  const latestFetchIdRef = useRef(0);
   const containerRef = useRef(null);
+  
   const [containerWidth, setContainerWidth] = useState(0);
+  const [isInitialMeasure, setIsInitialMeasure] = useState(true);
 
-  // --- Filters (remain here)
+  // Filters
   const [searchInput, setSearchInput] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
   const [dateFrom, setDateFrom] = useState("");
   const [dateTo, setDateTo] = useState("");
-
-  // signal that Clear was pressed — increments to notify child
+  
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [meta, setMeta] = useState({ page: 1, totalPages: 1, total: 0 });
+  
+  // Signal for OrdersGrid
   const [clearSignal, setClearSignal] = useState(0);
+
+  // Fixed grid: 3 columns x 6 rows = 18 items per page
+  const ITEMS_PER_PAGE = 18;
 
   const measure = useCallback(() => {
     const el = containerRef.current;
-    if (el) setContainerWidth(Math.floor(el.getBoundingClientRect().width));
+    if (el) {
+      setContainerWidth(Math.floor(el.getBoundingClientRect().width));
+      setIsInitialMeasure(false);
+    }
   }, []);
 
   useEffect(() => {
@@ -32,22 +47,44 @@ const OrdersPage = () => {
     return () => window.removeEventListener("resize", measure);
   }, [measure]);
 
+  const handleSearchSubmit = () => {
+    setSearchTerm(searchInput.trim());
+    setCurrentPage(1);
+  };
+
+  const handleKeyDown = (e) => e.key === "Enter" && handleSearchSubmit();
+
   const handleClear = () => {
     setSearchInput("");
+    setSearchTerm("");
     setSelectedCategory("");
     setDateFrom("");
     setDateTo("");
-
-    // notify OrdersGrid to reset orderType -> 'all'
+    setCurrentPage(1);
     setClearSignal((s) => s + 1);
   };
 
-  // OrdersGrid can call this when date validation fails and it wants the page to clear dates
   const handleClearDatesFromGrid = () => {
     setDateFrom("");
     setDateTo("");
-    // also notify radio reset if you want
     setClearSignal((s) => s + 1);
+  };
+
+  const handleCategoryChange = (value) => {
+    setSelectedCategory(value);
+    setCurrentPage(1);
+  };
+
+  const handleDateChange = (field, value) => {
+    if (field === "from") setDateFrom(value);
+    else setDateTo(value);
+    setCurrentPage(1);
+  };
+
+  const handlePageChange = (page) => {
+    if (page !== currentPage) {
+      setCurrentPage(page);
+    }
   };
 
   return (
@@ -66,10 +103,12 @@ const OrdersPage = () => {
             placeholder="Search orders..."
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
+            onKeyDown={handleKeyDown}
             style={ordersPageStyles.searchInput}
           />
 
           <button
+            onClick={handleSearchSubmit}
             style={ordersPageStyles.searchBtn}
             onMouseEnter={(e) => {
               e.currentTarget.style.backgroundColor = COLORS.text;
@@ -85,7 +124,7 @@ const OrdersPage = () => {
 
           <button
             style={ordersPageStyles.clearBtn}
-            onClick={handleClear} // <-- wired
+            onClick={handleClear}
             onMouseEnter={(e) => {
               e.currentTarget.style.backgroundColor = COLORS.text;
               e.currentTarget.style.color = COLORS.white;
@@ -106,14 +145,14 @@ const OrdersPage = () => {
             <input
               type="date"
               value={dateFrom}
-              onChange={(e) => setDateFrom(e.target.value)}
+              onChange={(e) => handleDateChange("from", e.target.value)}
               style={ordersPageStyles.dateInput}
             />
             <label style={ordersPageStyles.dateLabel}>To:</label>
             <input
               type="date"
               value={dateTo}
-              onChange={(e) => setDateTo(e.target.value)}
+              onChange={(e) => handleDateChange("to", e.target.value)}
               style={ordersPageStyles.dateInput}
             />
           </div>
@@ -122,7 +161,7 @@ const OrdersPage = () => {
           <div style={ordersPageStyles.customSelectWrapper}>
             <select
               value={selectedCategory}
-              onChange={(e) => setSelectedCategory(e.target.value)}
+              onChange={(e) => handleCategoryChange(e.target.value)}
               style={ordersPageStyles.customSelect}
             >
               <option value="">All Categories</option>
@@ -142,12 +181,29 @@ const OrdersPage = () => {
         <OrdersGrid
           dateFrom={dateFrom}
           dateTo={dateTo}
-          searchInput={searchInput}
+          searchTerm={searchTerm}
           selectedCategory={selectedCategory}
           clearSignal={clearSignal}
           onClearDates={handleClearDatesFromGrid}
+          currentPage={currentPage}
+          itemsPerPage={ITEMS_PER_PAGE}
+          isInitialMeasure={isInitialMeasure}
+          latestFetchIdRef={latestFetchIdRef}
+          onMetaUpdate={setMeta}
         />
       </div>
+
+      {/* PAGINATION */}
+      {meta.totalPages > 1 && (
+        <div style={ordersPageStyles.paginationRow}>
+          <Pagination
+            current={meta.page}
+            total={meta.totalPages}
+            onChange={handlePageChange}
+            withRowWrapper
+          />
+        </div>
+      )}
     </div>
   );
 };

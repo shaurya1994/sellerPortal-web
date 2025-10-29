@@ -8,6 +8,13 @@ export const ordersGridStyles = {
     gap: "1.75rem",
     boxSizing: "border-box",
   },
+  // Pagination  
+  paginationRow: {
+    display: "flex",
+    justifyContent: "center",
+    padding: "32px 0",
+    marginTop: "20px",
+  },
   // Toast container
   toastContainer: {
     position: "fixed",
@@ -119,14 +126,6 @@ export const ordersGridStyles = {
     display: "none" 
   },
   /* --- Grid --- */
-  // gridWrapper: {
-  //   width: "100%",
-  //   display: "grid",
-  //   gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))",
-  //   gap: "1.5rem",
-  //   justifyItems: "start", // first card always left aligned
-  // },
-  /* --- Grid --- */
   gridWrapper: {
     width: "100%",
     display: "grid",
@@ -134,6 +133,7 @@ export const ordersGridStyles = {
     gap: "1.25rem",
     justifyItems: "stretch",
   },
+  // Responsive Grid
   '@media (max-width: 1200px)': {
     gridWrapper: {
       gridTemplateColumns: "repeat(2, 1fr)",
