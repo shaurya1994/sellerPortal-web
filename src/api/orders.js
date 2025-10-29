@@ -11,7 +11,7 @@ export const fetchSellerOrders = async ({
   category_id = "",
   search = "",
   page = 1,
-  limit = 25,
+  limit = 2,
 } = {}) => {
   try {
     const response = await api.get(`/seller/grouped-orders-paginated`, {

@@ -131,44 +131,6 @@ export const productsPageStyles = {
     gap: "1.5rem",
   },
 
-  /* ---------------------------- PAGINATION ---------------------------- */
-  paginationRow: {
-    width: "100%",
-    display: "flex",
-    justifyContent: "center",
-    marginTop: "auto",
-    paddingTop: "1rem",
-  },
-  paginationContainer: {
-    display: "flex",
-    flexWrap: "wrap",
-    justifyContent: "center",
-    gap: "0.35rem",
-    alignItems: "center",
-    maxWidth: "90vw",
-  },
-  paginationBtn: {
-    minWidth: "38px",
-    padding: "7px 10px",
-    borderRadius: "8px",
-    border: `1px solid ${COLORS.border}`,
-    background: "transparent",
-    color: COLORS.text,
-    cursor: "pointer",
-    fontWeight: 600,
-    fontSize: "0.95rem",
-    transition: "all 0.15s ease",
-  },
-  paginationBtnActive: {
-    background: COLORS.primary,
-    color: "#fff",
-    borderColor: COLORS.primary,
-  },
-  paginationBtnDisabled: {
-    opacity: 0.45,
-    cursor: "not-allowed",
-  },
-
   /* ---------------------------- EMPTY / LOADING / ERROR ---------------------------- */
   emptyState: {
     width: "100%",
