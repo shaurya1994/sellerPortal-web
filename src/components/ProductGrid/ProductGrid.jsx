@@ -1,4 +1,5 @@
 // FILE: src/ProductGrid/ProductGrid.jsx
+
 import { useState, useEffect, useMemo } from "react";
 
 import AddProductCard from "./AddProductCard";
@@ -12,6 +13,7 @@ const ProductGrid = ({
   cardWidth = 320,
   gap = 24,
 }) => {
+
   const [productList, setProductList] = useState(products);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [showModal, setShowModal] = useState(false);
