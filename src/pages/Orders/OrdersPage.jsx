@@ -17,9 +17,7 @@ const debounce = (fn, delay) => {
     clearTimeout(timer);
     timer = setTimeout(() => fn(...args), delay);
   }
-
   debounced.cancel = () => clearTimeout(timer);
-
   return debounced;
 };
 

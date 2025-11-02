@@ -22,6 +22,7 @@ export const orderGridCardStyles = {
     flexDirection: 'row',
     alignItems: 'stretch',
     width: '100%',
+    paddingRight: '6px'
   },
   imageContainer: {
     position: 'relative',

@@ -1,4 +1,5 @@
 // FILE: src/components/ProductAddModal/ProductAddModal.jsx
+
 import { Modal } from "bootstrap";
 import { useState, useEffect, useRef, memo } from "react";
 
@@ -148,13 +149,11 @@ const ProductAddModal = memo(({ show, onClose, onSubmit }) => {
       const match = clean.match(/^(\d+(\.\d+)?)\s*(mm)?$/i);
       return match ? `${match[1]} MM` : clean;
     }
-
     
     if (type === "weight") {
       const match = clean.match(/^(\d*\.?\d+)\s*(gm|kg)?$/i);
       return match ? `${match[1]} ${unit}`.trim() : clean;
     }
-
 
     return clean;
   };
@@ -201,7 +200,8 @@ const ProductAddModal = memo(({ show, onClose, onSubmit }) => {
     }));
 
     const payload = new FormData();
-    payload.append("name", formState.name);
+    // payload.append("name", formState.name);
+    payload.append("name",formState.name.trim().replace(/\s+/g, " "));
     payload.append("category_id", formState.category_id);
     formState.photos.forEach((file) => payload.append("photos", file));
     payload.append("variants", JSON.stringify(formattedVariants));
@@ -236,15 +236,31 @@ const ProductAddModal = memo(({ show, onClose, onSubmit }) => {
 
           <div className="modal-body" style={styles.modalBody}>
             <form onSubmit={handleSubmit} style={styles.form}>
+              
               {/* Product Name */}
               <div style={styles.formGroup}>
                 <label htmlFor="name" style={styles.label}>Product Name</label>
+                {/* <input
+                  type="text"
+                  id="name"
+                  name="name"
+                  value={formState.name}
+                  onChange={handleInputChange}
+                  style={styles.input}
+                  required
+                /> */}
                 <input
                   type="text"
                   id="name"
                   name="name"
                   value={formState.name}
                   onChange={handleInputChange}
+                  onBlur={(e) => {
+                    const cleaned = e.target.value
+                      .trim()
+                      .replace(/\s+/g, " "); // collapse multiple spaces
+                    setFormState(prev => ({ ...prev, name: cleaned }));
+                  }}
                   style={styles.input}
                   required
                 />

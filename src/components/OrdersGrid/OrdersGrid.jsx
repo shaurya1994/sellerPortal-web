@@ -150,11 +150,11 @@ const OrdersGrid = ({
         </p>
       );
     }
-    return (
-      <p style={ordersGridStyles.dateRangeText}>
-        Date: <span style={ordersGridStyles.dateHighlight}>{formattedToday}</span>
-      </p>
-    );
+    // return (
+    //   <p style={ordersGridStyles.dateRangeText}>
+    //     Date: <span style={ordersGridStyles.dateHighlight}>{formattedToday}</span>
+    //   </p>
+    // );
   };
 
   return (
