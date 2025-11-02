@@ -1,4 +1,4 @@
-// // FILE: src/components/Pagination/Pagination.jsx
+// FILE: src/components/Pagination/Pagination.jsx
 
 import { paginationStyles } from "./Pagination.styles";
 

@@ -13,7 +13,6 @@ export const ordersPageStyles = {
     paddingBottom: "1rem",
     boxSizing: "border-box",
   },
-
   headerRow: {
     width: "100%",
     display: "flex",
@@ -23,7 +22,6 @@ export const ordersPageStyles = {
     flexWrap: "wrap",
     gap: "1rem",
   },
-
   /* LEFT: My Orders */
   titleWrapper: {
     position: "relative",
@@ -46,7 +44,6 @@ export const ordersPageStyles = {
     background: `linear-gradient(90deg, transparent 0%, ${COLORS.primary} 15%, ${COLORS.primary} 85%, transparent 100%)`,
     borderRadius: "2px",
   },
-
   /* RIGHT: Filters */
   filterBar: {
     display: "flex",
@@ -58,7 +55,9 @@ export const ordersPageStyles = {
   searchInput: {
     padding: "8px 12px",
     minWidth: "310px",
-    border: `1.5px solid ${COLORS.primary}`,
+    borderWidth: "1.5px",
+    borderStyle: "solid",
+    borderColor: COLORS.primary,
     borderRadius: "6px",
     outline: "none",
     fontSize: "0.95rem",
@@ -70,7 +69,9 @@ export const ordersPageStyles = {
     padding: "8px 14px",
     fontSize: "0.95rem",
     borderRadius: "6px",
-    border: `1.5px solid ${COLORS.primary}`,
+    borderWidth: "1.5px",
+    borderStyle: "solid",
+    borderColor: COLORS.primary,
     backgroundColor: COLORS.primary,
     color: COLORS.white,
     fontWeight: 600,
@@ -81,7 +82,9 @@ export const ordersPageStyles = {
     padding: "8px 14px",
     fontSize: "0.95rem",
     borderRadius: "6px",
-    border: `1.5px solid ${COLORS.primary}`,
+    borderWidth: "1.5px",
+    borderStyle: "solid",
+    borderColor: COLORS.primary,
     backgroundColor: "transparent",
     color: COLORS.primary,
     fontWeight: 600,
@@ -101,7 +104,9 @@ export const ordersPageStyles = {
     width: "145px",
     height: "41px",
     padding: "7px 10px",
-    border: `1.5px solid ${COLORS.primary}`,
+    borderWidth: "1.5px",
+    borderStyle: "solid",
+    borderColor: COLORS.primary,
     borderRadius: "6px",
     outline: "none",
     fontSize: "0.9rem",
@@ -109,12 +114,17 @@ export const ordersPageStyles = {
     backgroundColor: COLORS.white,
     transition: "border-color 0.2s ease",
   },
-  customSelectWrapper: { position: "relative", width: "200px" },
+  customSelectWrapper: { 
+    position: "relative", 
+    width: "200px" 
+  },
   customSelect: {
     appearance: "none",
     width: "100%",
     padding: "8px 12px",
-    border: `1.5px solid ${COLORS.primary}`,
+    borderWidth: "1.5px",
+    borderStyle: "solid",
+    borderColor: COLORS.primary,
     borderRadius: "6px",
     backgroundColor: COLORS.white,
     color: COLORS.text,
