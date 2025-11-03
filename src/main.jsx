@@ -1,4 +1,5 @@
 // FILE: src/main.jsx
+
 import React from "react";
 import App from "./App.jsx";
 import store from "./store/index.js";

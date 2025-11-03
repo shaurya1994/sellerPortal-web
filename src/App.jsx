@@ -1,3 +1,5 @@
+// FILE: src/App.jsx
+
 import Layout from "./components/Layout/layout"
 import { Routes, Route, Navigate } from "react-router-dom";
 
