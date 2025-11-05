@@ -1,4 +1,4 @@
-// FILE: src/store/authSlice.jsx
+// FILE: src/store/authSlice.js
 
 import { createSlice } from "@reduxjs/toolkit";
 
@@ -17,12 +17,18 @@ const authSlice = createSlice({
       state.isAuthenticated = true;
       state.user = user;
       state.token = token;
+
+      localStorage.setItem("auth_token", token);
+      localStorage.setItem("auth_user", JSON.stringify(user));
     },
     clearAuth(state) {
       state.isAuthenticated = false;
       state.user = null;
       state.token = null;
-    },
+
+      localStorage.removeItem("auth_token");
+      localStorage.removeItem("auth_user");
+    }
   },
 });
 
