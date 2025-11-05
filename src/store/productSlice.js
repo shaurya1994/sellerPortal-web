@@ -1,4 +1,5 @@
-// src/store/productSlice.js
+// FILE: src/store/productSlice.js
+
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import api from "../api/axios";
 

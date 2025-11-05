@@ -8,4 +8,49 @@
       |  |                                |   Premium Oak Cabinet XL Series                |                                                          
       |  |                                |                                                |                                                          
       |  +--------------------------------+   BIG • 2.4KG                                  |                                                          
-      +------------------------------------------------------------------------------------+                                                          
+      +------------------------------------------------------------------------------------+ 
+
+
+First: What have we planned so far (in one clean prompt)
+
+Here is the project goal and plan summary up to this point — save this for your docs:
+
+App Goal:
+Convert existing seller-only dashboard into a unified platform supporting seller & buyer roles while sharing the same codebase.
+
+Authentication Strategy:
+
+Hybrid session model:
+
+httpOnly secure cookie stores refresh token
+
+Redux in-memory stores short-lived access token
+
+App boots → checks cookie → fetches fresh access token → loads user + role
+
+On 401 → auto refresh → retry request → logout if invalid
+
+Architecture upgrades planned:
+
+Add authentication layer (no hardcoded tokens)
+
+Add user state to Redux (isAuthenticated, user, accessToken)
+
+Add protected routes (RequireAuth)
+
+Add role gate (RequireRole) → later
+
+Introduce dynamic API paths using symbolic prefix @role
+
+Seller stays default for now
+
+Buyer comes later
+
+Current focus:
+✅ Bring in authentication
+✅ Replace hardcoded seller token
+✅ Maintain seller API functionality (no break)
+❌ Buyer mode to be added after auth works
+
+Key decision:
+Start with seller session only → once stable → add buyer mode.                                                    

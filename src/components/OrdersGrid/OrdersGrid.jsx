@@ -25,7 +25,7 @@ const OrdersGrid = ({
   const [loading, setLoading] = useState(false);
   const [isNarrow, setIsNarrow] = useState(() => window.innerWidth < 920);
 
-  // ✅ ref to track scroll container
+  // Ref to track scroll container
   const topRef = useRef(null);
 
   useEffect(() => {
@@ -68,7 +68,7 @@ const OrdersGrid = ({
 
   const formattedFrom = dateFrom ? formatDate(dateFrom) : "";
   const formattedTo = dateTo ? formatDate(dateTo) : "";
-  const formattedToday = formatDate(new Date());
+  // const formattedToday = formatDate(new Date());
 
   const loadOrders = useCallback(
     async (page = 1) => {

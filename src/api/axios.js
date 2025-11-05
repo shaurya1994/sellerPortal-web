@@ -1,57 +1,126 @@
 // FILE: src/api/axios.js
+
 import axios from "axios";
+
+import store from "../store";
+import { setAuth, clearAuth } from "../store/authSlice";
 
 const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
-// Hardcoded JWT token (for now, until login flow is built)
-const TOKEN =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjIiLCJyb2xlIjoic2VsbGVyIiwibmFtZSI6IlNlbGxlciBPbmUiLCJjb21wYW55X25hbWUiOiJIYXJkd2FyZSBTdXBwbGllcyBQdnQgTHRkIiwiZW1haWwiOiJzZWxsZXIxQGV4YW1wbGUuY29tIiwibW9iaWxlIjoiODg4ODg4ODg4OCIsImdzdF9udW1iZXIiOiIyMkJCQkJCMTExMUIyWjYiLCJpYXQiOjE3NjE3NDYwODksImV4cCI6MTc2MjM1MDg4OX0.GOFBrjVV3zSXrYkKcQCVj7oYpRSuP_o4p01BmNElbXY";
-
+// Create Axios instance
 const api = axios.create({
   baseURL: BASE_URL,
-  headers: {
-    "Content-Type": "application/json",
-    Authorization: `Bearer ${TOKEN}`,
-  },
+  withCredentials: true, // Send cookies (for refresh token)
 });
 
+// Attach access token to every request
+api.interceptors.request.use((config) => {
+  const state = store.getState();
+  const token = state.auth.token;
+
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  } else {
+    delete config.headers.Authorization;
+  }
+
+  // Only set JSON header when NOT uploading files
+  if (!(config.data instanceof FormData)) {
+    config.headers["Content-Type"] = "application/json";
+  }
+
+  return config;
+});
+
+// ============================
+// Refresh Token Logic
+// ============================
+
+let isRefreshing = false;
+let failedQueue = [];
+
+const processQueue = (error, token = null) => {
+  failedQueue.forEach((prom) => {
+    if (error) prom.reject(error);
+    else prom.resolve(token);
+  });
+
+  failedQueue = [];
+};
+
+api.interceptors.response.use(
+  (response) => response, // success passthrough
+  async (error) => {
+    const originalRequest = error.config;
+
+    // If unauthorized & not retrying yet
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true;
+
+      if (isRefreshing) {
+        return new Promise((resolve, reject) => {
+          failedQueue.push({ resolve, reject });
+        })
+          .then((token) => {
+            originalRequest.headers.Authorization = `Bearer ${token}`;
+            return api(originalRequest);
+          })
+          .catch((err) => Promise.reject(err));
+      }
+
+      isRefreshing = true;
+
+      try {
+        const res = await axios.post(
+          `${BASE_URL}/auth/refresh`,
+          {},
+          { withCredentials: true }
+        );
+
+        const { token, user } = res.data;
+
+        // Update Redux state
+        store.dispatch(setAuth({ user, token }));
+
+        processQueue(null, token);
+
+        // Retry original request with new token
+        originalRequest.headers.Authorization = `Bearer ${token}`;
+        return api(originalRequest);
+
+      } catch (refreshError) {
+        processQueue(refreshError, null);
+        store.dispatch(clearAuth());
+        return Promise.reject(refreshError);
+        
+      } finally {
+        isRefreshing = false;
+      }
+    }
+
+    // If not refresh-related, just fail
+    return Promise.reject(error);
+  }
+);
+
 export default api;
+
 
 // FILE: src/api/axios.js
 // import axios from "axios";
 
 // const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
-// // Retrieve JWT dynamically (from localStorage, sessionStorage, etc.)
-// const getToken = () => {
-//   return localStorage.getItem("token") || sessionStorage.getItem("token");
-// };
+// // Hardcoded JWT token (for now, until login flow is built)
+// const TOKEN =
+//   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjIiLCJyb2xlIjoic2VsbGVyIiwibmFtZSI6IlNlbGxlciBPbmUiLCJjb21wYW55X25hbWUiOiJIYXJkd2FyZSBTdXBwbGllcyBQdnQgTHRkIiwiZW1haWwiOiJzZWxsZXIxQGV4YW1wbGUuY29tIiwibW9iaWxlIjoiODg4ODg4ODg4OCIsImdzdF9udW1iZXIiOiIyMkJCQkJCMTExMUIyWjYiLCJpYXQiOjE3NjE3NDYwODksImV4cCI6MTc2MjM1MDg4OX0.GOFBrjVV3zSXrYkKcQCVj7oYpRSuP_o4p01BmNElbXY";
 
-// // Create Axios instance
 // const api = axios.create({
 //   baseURL: BASE_URL,
-//   withCredentials: false, // change to true if your backend uses cookies
-// });
-
-// // Interceptor to attach token for every request
-// api.interceptors.request.use(
-//   (config) => {
-//     const token = getToken();
-
-//     if (token) {
-//       config.headers.Authorization = `Bearer ${token}`;
-//     } else {
-//       delete config.headers.Authorization;
-//     }
-
-//     // Don’t force "application/json" on multipart uploads
-//     if (!(config.data instanceof FormData)) {
-//       config.headers["Content-Type"] = "application/json";
-//     }
-
-//     return config;
+//   headers: {
+//     "Content-Type": "application/json",
+//     Authorization: `Bearer ${TOKEN}`,
 //   },
-//   (error) => Promise.reject(error)
-// );
+// });
 
 // export default api;
