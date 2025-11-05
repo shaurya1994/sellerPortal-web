@@ -1,4 +1,4 @@
-// // FILE: src/store/authSlice.jsx
+// FILE: src/store/authSlice.jsx
 
 import { createSlice } from "@reduxjs/toolkit";
 
@@ -30,36 +30,3 @@ export const { setAuth, clearAuth } = authSlice.actions;
 export default authSlice.reducer;
 
 export const selectAuth = (s) => s.auth;
-
-// import { createSlice } from "@reduxjs/toolkit";
-
-// const initialState = {
-//   isAuthenticated: false,
-//   user: null,         // { id, name, role: "buyer" | "seller" }
-//   accessToken: null,  // short-lived token in memory (NOT localStorage)
-// };
-
-// const authSlice = createSlice({
-//   name: "auth",
-//   initialState,
-//   reducers: {
-//     authSet(state, action) {
-//       const { user, accessToken } = action.payload || {};
-//       state.user = user || null;
-//       state.accessToken = accessToken || null;
-//       state.isAuthenticated = !!user;
-//     },
-//     authClear(state) {
-//       state.user = null;
-//       state.accessToken = null;
-//       state.isAuthenticated = false;
-//     },
-//   },
-// });
-
-// export const { authSet, authClear } = authSlice.actions;
-// export default authSlice.reducer;
-
-// export const selectAuth = (s) => s.auth;
-// export const selectMode = (s) => s.auth?.user?.role || "seller"; // default
-// // export const selectMode = (s) => s.auth?.user?.role || "shreem"; // default

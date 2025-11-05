@@ -2,39 +2,39 @@
 
 import api from "./apiClient";
 import store from "../store";
-import { authSet, authClear } from "../store/authSlice";
+import { setAuth, clearAuth } from "../store/authSlice";
 
 /**
- * login: server should set refresh cookie; returns { user, accessToken }
+ * login: server should set refresh cookie and return { user, token }
  */
-export async function login({ email, password }) {
-  const res = await api.post("/auth/login", { email, password });
-  const { user, accessToken } = res.data || {};
-  store.dispatch(authSet({ user, accessToken }));
+export async function login({ mobile, otp, role }) {
+  const res = await api.post("/auth/verify-otp", { mobile, otp, role });
+  const { user, token } = res.data || {};
+  store.dispatch(setAuth({ user, token }));
   return user;
 }
 
 /**
- * logout: server clears refresh cookie; client clears memory token
+ * logout: clear refresh cookie + memory token
  */
 export async function logout() {
   try { await api.post("/auth/logout"); } catch {}
-  store.dispatch(authClear());
+  store.dispatch(clearAuth());
 }
 
 /**
- * bootstrap: call once on app start to restore session
- * if refresh cookie exists, /auth/refresh returns token+user
+ * bootstrap session on app load
+ * if refresh cookie exists, get new access token + user
  */
 export async function bootstrapSession() {
   try {
     const res = await api.post("/auth/refresh");
-    const { user, accessToken } = res.data || {};
-    if (user && accessToken) {
-      store.dispatch(authSet({ user, accessToken }));
+    const { user, token } = res.data || {};
+    if (user && token) {
+      store.dispatch(setAuth({ user, token }));
       return true;
     }
   } catch {}
-  store.dispatch(authClear());
+  store.dispatch(clearAuth());
   return false;
 }

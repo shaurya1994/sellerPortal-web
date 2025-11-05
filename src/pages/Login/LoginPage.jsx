@@ -1,48 +1,98 @@
-import { useState } from "react";
-import { login } from "../../api/auth";
+// FILE: src/pages/Login/LoginPage.jsx
+
+import { useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
-export default function LoginPage() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [busy, setBusy] = useState(false);
-  const [err, setErr] = useState("");
-  const navigate = useNavigate();
-  const location = useLocation();
-  const from = location.state?.from?.pathname || "/";
+import { loginStyles as s } from "./LoginPage.styles";
+import { requestOtp, verifyOtp } from "../../api/authApi";
 
-  const onSubmit = async (e) => {
-    e.preventDefault();
-    setBusy(true); setErr("");
+export default function LoginPage({ defaultRole = "buyer" }) {
+  const [mobile, setMobile] = useState("");
+  const [otp, setOtp] = useState("");
+  const [step, setStep] = useState("mobile");
+  const [error, setError] = useState("");
+
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  // role decided by route: /login => buyer, /s/login => seller
+  const role = useMemo(
+    () => (location.pathname.startsWith("/s/") ? "seller" : defaultRole),
+    [location.pathname, defaultRole]
+  );
+
+  const signupPath = role === "seller" ? "/s/signup" : "/signup";
+
+  const sendOtp = async () => {
+    setError("");
+    if (!/^[6-9][0-9]{9}$/.test(mobile)) {
+      setError("Enter valid mobile number");
+      return;
+    }
     try {
-      await login({ email, password });
-      navigate(from, { replace: true });
+      await requestOtp(mobile, role); // role only here
+      setStep("otp");
     } catch (e) {
-      setErr(e?.response?.data?.message || "Login failed");
-    } finally {
-      setBusy(false);
+      setError(e?.response?.data?.message || "Failed to send OTP");
+    }
+  };
+
+  const submitOtp = async () => {
+    setError("");
+    try {
+      await verifyOtp(mobile, otp); // no role here
+      navigate("/products");
+    } catch (e) {
+      setError(e?.response?.data?.message || "Login failed");
     }
   };
 
   return (
-    <div className="container" style={{ maxWidth: 420, marginTop: 80 }}>
-      <h3 className="mb-3">Sign in</h3>
-      <form onSubmit={onSubmit}>
-        <div className="mb-3">
-          <label className="form-label">Email</label>
-          <input className="form-control" value={email}
-                 onChange={(e)=>setEmail(e.target.value)} required />
+    <div style={s.wrapper}>
+      <div style={s.card}>
+        <div style={s.title}>Welcome 👋</div>
+        <div style={s.subtitle}>
+          {role === "seller" ? "Seller portal" : "Buyer portal"}
         </div>
-        <div className="mb-3">
-          <label className="form-label">Password</label>
-          <input type="password" className="form-control" value={password}
-                 onChange={(e)=>setPassword(e.target.value)} required />
-        </div>
-        {err && <div className="alert alert-danger py-2">{err}</div>}
-        <button className="btn btn-primary w-100" disabled={busy}>
-          {busy ? "Signing in..." : "Sign in"}
-        </button>
-      </form>
+
+        {error && <div style={s.error}>{error}</div>}
+
+        {step === "mobile" && (
+          <>
+            <input
+              style={s.input}
+              placeholder="Enter mobile number"
+              value={mobile}
+              onChange={(e) => setMobile(e.target.value)}
+            />
+            <button style={s.btn} onClick={sendOtp}>
+              Get OTP
+            </button>
+
+            <div style={s.linkBtn} onClick={() => navigate(signupPath)}>
+              New user? Create an account
+            </div>
+          </>
+        )}
+
+        {step === "otp" && (
+          <>
+            <input
+              style={s.input}
+              placeholder="Enter OTP"
+              value={otp}
+              onChange={(e) => setOtp(e.target.value)}
+            />
+            <button style={s.btn} onClick={submitOtp}>
+              Verify & Continue
+            </button>
+
+            <div style={s.linkBtn} onClick={() => setStep("mobile")}>
+              ← Back
+            </div>
+          </>
+        )}
+      </div>
     </div>
   );
 }

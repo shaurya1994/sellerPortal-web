@@ -1,26 +1,27 @@
 // FILE: src/App.jsx
 
-import Layout from "./components/Layout/layout";
 import { Routes, Route, Navigate } from "react-router-dom";
 
+import Layout from "./components/Layout/layout";
 import LoginPage from "./pages/Login/LoginPage";
+import SignUpPage from "./pages/SignUp/SignUpPage";
 import ProductsPage from "./pages/Products/ProductsPage";
 import OrdersPage from "./pages/Orders/OrdersPage";
-
 import RequireAuth from "./routes/RequireAuth";
 
-const App = () => {
+export default function App() {
   return (
-    <Layout>
-      <Routes>
+    <Routes>
 
-        {/* Public route */}
-        <Route path="/login" element={<LoginPage />} />
+      {/* ✅ Public routes, NO layout */}
+      <Route path="/login" element={<LoginPage defaultRole="buyer" />} />
+      <Route path="/signup" element={<SignUpPage defaultRole="buyer" />} />
 
-        {/* Default redirect */}
-        <Route path="/" element={<Navigate to="/products" replace />} />
+      <Route path="/s/login" element={<LoginPage defaultRole="seller" />} />
+      <Route path="/s/signup" element={<SignUpPage defaultRole="seller" />} />
 
-        {/* Auth-protected shared pages (buyer or seller) */}
+      {/* ✅ Authenticated routes go inside Layout */}
+      <Route element={<Layout />}>
         <Route
           path="/products"
           element={
@@ -29,7 +30,6 @@ const App = () => {
             </RequireAuth>
           }
         />
-
         <Route
           path="/orders"
           element={
@@ -38,14 +38,72 @@ const App = () => {
             </RequireAuth>
           }
         />
+      </Route>
 
-      </Routes>
-    </Layout>
+      {/* ✅ Default */}
+      <Route path="/" element={<Navigate to="/login" replace />} />
+    </Routes>
   );
-};
+}
 
-export default App;
+// import { Routes, Route, Navigate } from "react-router-dom";
 
+// import Layout from "./components/Layout/layout";
+// import RequireAuth from "./routes/RequireAuth";
+
+// import LoginPage from "./pages/Login/LoginPage";
+// import SignUpPage from "./pages/SignUp/SignUpPage";
+
+// import ProductsPage from "./pages/Products/ProductsPage";
+// import OrdersPage from "./pages/Orders/OrdersPage";
+
+// /**
+//  * Public routes (/login for buyers, /s/login for sellers)
+//  * Authenticated routes are nested under <Layout> so login pages don't show header/footer.
+//  */
+// const App = () => {
+//   return (
+//     <>
+//       {/* Public (no layout) */}
+//       <Routes>
+//         <Route path="/login" element={<LoginPage defaultRole="buyer" />} />
+//         <Route path="/s/login" element={<LoginPage defaultRole="seller" />} />
+
+//         <Route path="/signup" element={<SignUpPage defaultRole="buyer" />} />
+//         <Route path="/s/signup" element={<SignUpPage defaultRole="seller" />} />
+
+//         {/* Default redirect to buyer login if unauth root */}
+//         <Route path="/" element={<Navigate to="/login" replace />} />
+//       </Routes>
+
+//       {/* Authenticated (with layout) */}
+//       <Layout>
+//         <Routes>
+//           <Route
+//             path="/products"
+//             element={
+//               <RequireAuth>
+//                 <ProductsPage />
+//               </RequireAuth>
+//             }
+//           />
+//           <Route
+//             path="/orders"
+//             element={
+//               <RequireAuth>
+//                 <OrdersPage />
+//               </RequireAuth>
+//             }
+//           />
+//         </Routes>
+//       </Layout>
+//     </>
+//   );
+// };
+
+// export default App;
+
+// FILE: src/App.jsx
 
 // import Layout from "./components/Layout/layout"
 // import { Routes, Route, Navigate } from "react-router-dom";
