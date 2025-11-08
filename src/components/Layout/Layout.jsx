@@ -1,11 +1,12 @@
 // FILE: Layout.jsx
 
+import { useSelector } from "react-redux";
+import { useEffect, useRef, useState } from "react";
+import { Outlet, useNavigate, useLocation } from "react-router-dom";
+
 import Header from "./Header";
 import Footer from "./Footer";
 import { layoutStyles } from "./Layout.styles";
-import { Outlet, useNavigate, useLocation } from "react-router-dom";
-import { useEffect, useRef, useState } from "react";
-import { useSelector } from "react-redux";
 import { selectAuth } from "../../store/authSlice";
 
 const Layout = ({ children }) => {
@@ -40,7 +41,7 @@ const Layout = ({ children }) => {
   }, [active]);
 
   const handleTabClick = (path) => {
-    // ✅ Auto prepend `/s` for seller URLs
+    // Auto prepend `/s` for seller URLs
     const targetPath = isSeller ? `/s${path}` : path;
     navigate(targetPath);
   };

@@ -2,8 +2,7 @@
 
 import api from "./apiClient";
 
-// Seller: Fetch paginated products uploaded by the seller
-// Endpoint: /seller/my-products-paginated
+// ---- SELLER PRODUCTS ----
 export const fetchSellerProducts = async ({
   page = 1,
   limit = 24,
@@ -19,7 +18,9 @@ export const fetchSellerProducts = async ({
         search: search || undefined,
         category_id: category_id || undefined,
         status: status || undefined,
+        t: Date.now(), // prevent cache reuse
       },
+      headers: { "Cache-Control": "no-cache" },
     });
     return res.data;
   } catch (err) {
@@ -28,8 +29,7 @@ export const fetchSellerProducts = async ({
   }
 };
 
-// Buyer: Fetch approved/public products (paginated)
-// Endpoint expected by backend: /buyer/approved-products
+// ---- BUYER PRODUCTS ----
 export const fetchBuyerProducts = async ({
   page = 1,
   limit = 25,
@@ -37,13 +37,16 @@ export const fetchBuyerProducts = async ({
   category_id = "",
 } = {}) => {
   try {
-    const res = await api.get(`/buyer/approved-products`, {
+    // Corrected endpoint name to match backend
+    const res = await api.get(`/buyer/approved-products-paginated`, {
       params: {
         page,
         limit: Number(limit) || 25,
         search: search || undefined,
         category_id: category_id || undefined,
+        t: Date.now(),
       },
+      headers: { "Cache-Control": "no-cache" },
     });
     return res.data;
   } catch (err) {
@@ -52,14 +55,15 @@ export const fetchBuyerProducts = async ({
   }
 };
 
-// Unified helper — calls seller or buyer fetcher based on role
+// ---- UNIFIED ROLE AWARE FETCHER ----
 export const fetchProducts = async (opts = {}, role = "buyer") => {
-  if (role === "seller") return await fetchSellerProducts(opts);
-  return await fetchBuyerProducts(opts);
+  return role === "seller"
+    ? await fetchSellerProducts(opts)
+    : await fetchBuyerProducts(opts);
 };
 
-// Seller: Fetch paginated products uploaded by the seller
-// Matches backend: getMyProductsPaginated
+// ---- SELLER PRODUCTS ----
+// Endpoint: /seller/my-products-paginated
 // export const fetchSellerProducts = async ({
 //   page = 1,
 //   limit = 24,
@@ -75,6 +79,10 @@ export const fetchProducts = async (opts = {}, role = "buyer") => {
 //         search: search || undefined,
 //         category_id: category_id || undefined,
 //         status: status || undefined,
+//         t: Date.now(), // ⚡ prevent 304 cache hits
+//       },
+//       headers: {
+//         "Cache-Control": "no-cache",
 //       },
 //     });
 //     return res.data;
@@ -84,19 +92,25 @@ export const fetchProducts = async (opts = {}, role = "buyer") => {
 //   }
 // };
 
-// // Buyer: Fetch approved products (public)
-// // Matches backend: getApprovedProductsPaginated
+// // ---- BUYER PRODUCTS ----
+// // Endpoint: /buyer/approved-products
 // export const fetchBuyerProducts = async ({
 //   page = 1,
 //   limit = 25,
+//   search = "",
 //   category_id = "",
 // } = {}) => {
 //   try {
-//     const res = await api.get(`/buyer/approved-products`, {
+//     const res = await api.get(`/buyer/approved-products-paginated`, {
 //       params: {
 //         page,
 //         limit: Number(limit) || 25,
+//         search: search || undefined,
 //         category_id: category_id || undefined,
+//         t: Date.now(), // ⚡ prevent cache revalidation
+//       },
+//       headers: {
+//         "Cache-Control": "no-cache",
 //       },
 //     });
 //     return res.data;
@@ -106,36 +120,11 @@ export const fetchProducts = async (opts = {}, role = "buyer") => {
 //   }
 // };
 
-// // Unified fetcher — automatically calls correct endpoint
+// // ---- UNIFIED ROLE AWARE FETCHER ----
 // export const fetchProducts = async (opts = {}, role = "buyer") => {
-//   if (role === "seller") return await fetchSellerProducts(opts);
-//   return await fetchBuyerProducts(opts);
-// };
-
-// Fetching products uploaded by seller (Paginated)
-// export const fetchSellerProducts = async ({
-//   page = 1,
-//   limit = 24,
-//   search = "",
-//   category_id = "",
-//   status = "",
-// } = {}) => {
-//   try {
-//     const response = await api.get(`@role/my-products-paginated`, {
-//       params: {
-//         page,
-//         limit: Number(limit) || 24,
-//         search: search || undefined,
-//         category_id: category_id || undefined,
-//         status: status || undefined,
-//       },
-//     });
-//     return response.data;
-    
-//   } catch (error) {
-//     console.error("Error fetching paginated products:", error.response || error);
-//     throw error;
-//   }
+//   return role === "seller"
+//     ? await fetchSellerProducts(opts)
+//     : await fetchBuyerProducts(opts);
 // };
 
 // Adding new product (multipart)
