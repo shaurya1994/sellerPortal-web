@@ -11,7 +11,7 @@ const ProductGridCard = ({ product, cardWidth = 320 }) => {
   const [hoveredNext, setHoveredNext] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
 
-  // ✅ Normalize product name for both buyer/seller
+  // Normalize product name for both buyer/seller
   const productName = product.name || product.public_code || "Unnamed Product";
   const { photos = [] } = product;
   const hasImages = photos.length > 0;

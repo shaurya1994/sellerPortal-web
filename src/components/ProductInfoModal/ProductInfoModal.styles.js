@@ -66,7 +66,7 @@ export const productInfoModalStyles = {
   category: { 
     color: "#666", 
     marginBottom: "10px", 
-    fontSize: "0.9rem" 
+    fontSize: "1rem" 
   },
   table: { 
     width: "100%", 
