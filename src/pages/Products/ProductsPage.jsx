@@ -9,7 +9,11 @@ import ProductGrid from "../../components/ProductGrid/ProductGrid";
 import ProductAddModal from "../../components/ProductAddModal/ProductAddModal";
 import NetworkErrorIcon from "../../components/NetworkErrorIcon/NetworkErrorIcon";
 
-import { fetchSellerProducts } from "../../api/products";
+// import { fetchSellerProducts } from "../../api/products";
+import { fetchProducts } from "../../api/products";
+import { useSelector } from "react-redux";
+import { selectAuth } from "../../store/authSlice";
+
 import { CATEGORY_MAP } from "../../constants/categoryMap";
 
 const ProductsPage = () => {
@@ -68,18 +72,58 @@ const ProductsPage = () => {
   const itemsPerPage = Math.max(1, totalGridSlots - 1);
 
   // --- DATA FETCHER ---
+  // const loadProducts = useCallback(
+  //   async (page = 1) => {
+  //     const fetchId = ++latestFetchIdRef.current;
+
+  //     setLoading(true);
+  //     try {
+  //       const response = await fetchSellerProducts({
+  //         page,
+  //         limit: itemsPerPage,
+  //         search: searchTerm || "",
+  //         category_id: selectedCategory || "",
+  //       });
+
+  //       if (fetchId === latestFetchIdRef.current) {
+  //         setProducts(response.data || []);
+  //         setMeta(response.meta || { page: 1, totalPages: 1, total: 0 });
+  //         setNetworkError(false);
+  //       }
+  //     } catch (err) {
+  //       if (fetchId === latestFetchIdRef.current) {
+  //         console.error("Error loading products:", err);
+  //         setNetworkError(true);
+  //         setProducts([]);
+  //       }
+  //     } finally {
+  //       if (fetchId === latestFetchIdRef.current) {
+  //         setLoading(false);
+  //       }
+  //     }
+  //   },
+  //   [itemsPerPage, searchTerm, selectedCategory]
+  // );
+  
+  const { user } = useSelector(selectAuth);
+  const role = user?.role || "buyer";
+
+  // --- DATA FETCHER ---
   const loadProducts = useCallback(
     async (page = 1) => {
       const fetchId = ++latestFetchIdRef.current;
-
       setLoading(true);
+
       try {
-        const response = await fetchSellerProducts({
-          page,
-          limit: itemsPerPage,
-          search: searchTerm || "",
-          category_id: selectedCategory || "",
-        });
+        const response = await fetchProducts(
+          {
+            page,
+            limit: itemsPerPage,
+            search: searchTerm || "",
+            category_id: selectedCategory || "",
+          },
+          role
+        );
 
         if (fetchId === latestFetchIdRef.current) {
           setProducts(response.data || []);
@@ -98,7 +142,7 @@ const ProductsPage = () => {
         }
       }
     },
-    [itemsPerPage, searchTerm, selectedCategory]
+    [itemsPerPage, searchTerm, selectedCategory, role]
   );
 
   useEffect(() => {

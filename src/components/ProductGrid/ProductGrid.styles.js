@@ -1,4 +1,4 @@
-// FILE: src/ProductGrid/ProductGrid.styles.js
+// FILE: src/components/ProductGrid/ProductGrid.styles.js
 
 export const gridStyles = {
   // Wrapper for the entire product grid
