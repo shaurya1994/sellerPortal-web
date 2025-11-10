@@ -70,4 +70,35 @@ export const loginStyles = {
     textAlign: "center",
     marginBottom: "0.8rem",
   },
+
+  // --- Checking server card ---
+  checkingCard: {
+    width: "360px",
+    padding: "2rem 2.2rem",
+    borderRadius: "14px",
+    background: "#fff",
+    boxShadow: "0 8px 28px rgba(0,0,0,0.06)",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    textAlign: "center",
+  },
+  checkingIcon: {
+    fontSize: "2.5rem",
+    color: "#ffb74d",
+    marginBottom: "12px",
+  },
+  checkingTitle: {
+    fontSize: "1.4rem",
+    marginBottom: "8px",
+    color: COLORS.text,
+    fontWeight: 600,
+  },
+  checkingText: {
+    color: COLORS.textSecondary,
+    fontSize: "0.95rem",
+    lineHeight: "1.5",
+    maxWidth: "280px",
+  },
 };

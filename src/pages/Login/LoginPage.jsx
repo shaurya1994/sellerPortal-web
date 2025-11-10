@@ -1,10 +1,14 @@
 // FILE: src/pages/Login/LoginPage.jsx
 
 import { useMemo, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 import { loginStyles as s } from "./LoginPage.styles";
+
 import { requestOtp, verifyOtp } from "../../api/authApi";
+
+import { useServerStatus } from "../../hooks/useServerStatus";
+import ServerOffline from "../../components/ServerOffline/ServerOffline";
 
 export default function LoginPage({ defaultRole = "buyer" }) {
   const [mobile, setMobile] = useState("");
@@ -12,24 +16,37 @@ export default function LoginPage({ defaultRole = "buyer" }) {
   const [step, setStep] = useState("mobile");
   const [error, setError] = useState("");
 
-  const location = useLocation();
   const navigate = useNavigate();
+  const location = useLocation();
+  const { serverOnline, initialCheckDone, checkServer } = useServerStatus();
 
-  // Determine role by URL
   const role = useMemo(
     () => (location.pathname.startsWith("/s/") ? "seller" : defaultRole),
     [location.pathname, defaultRole]
   );
 
+  if (!initialCheckDone) {
+    return (
+      <div style={s.wrapper}>
+        <div style={s.checkingCard}>
+          <div style={s.checkingIcon}>⚙️</div>
+          <h2 style={s.checkingTitle}>Checking server status…</h2>
+          <p style={s.checkingText}>
+            Please wait while we connect to the server.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+
+  if (!serverOnline) return <ServerOffline onRetry={checkServer} />;
+
   const signupPath = role === "seller" ? "/s/signup" : "/signup";
 
-  // ---- Send OTP ----
   const sendOtp = async () => {
     setError("");
-    if (!/^[6-9][0-9]{9}$/.test(mobile)) {
-      setError("Enter valid mobile number");
-      return;
-    }
+    if (!/^[6-9][0-9]{9}$/.test(mobile)) return setError("Enter valid number");
     try {
       await requestOtp(mobile, role);
       setStep("otp");
@@ -38,19 +55,16 @@ export default function LoginPage({ defaultRole = "buyer" }) {
     }
   };
 
-  // ---- Verify OTP ----
   const submitOtp = async () => {
     setError("");
     try {
-      const user = await verifyOtp(mobile, otp, role); // ✅ include role here
-      const redirectPath = user.role === "seller" ? "/s/products" : "/products";
-      navigate(redirectPath, { replace: true });
+      await verifyOtp(mobile, otp);
+      navigate("/products");
     } catch (e) {
       setError(e?.response?.data?.message || "Login failed");
     }
   };
 
-  // ---- Render ----
   return (
     <div style={s.wrapper}>
       <div style={s.card}>
@@ -69,15 +83,9 @@ export default function LoginPage({ defaultRole = "buyer" }) {
               value={mobile}
               onChange={(e) => setMobile(e.target.value)}
             />
-            <button style={s.btn} onClick={sendOtp}>
-              Get OTP
-            </button>
-
-            <div
-              style={s.linkBtn}
-              onClick={() => navigate(signupPath)}
-            >
-              New user? Create an account
+            <button style={s.btn} onClick={sendOtp}>Get OTP</button>
+            <div style={s.linkBtn} onClick={() => navigate(signupPath)}>
+              New user? Create account
             </div>
           </>
         )}
@@ -90,10 +98,7 @@ export default function LoginPage({ defaultRole = "buyer" }) {
               value={otp}
               onChange={(e) => setOtp(e.target.value)}
             />
-            <button style={s.btn} onClick={submitOtp}>
-              Verify & Continue
-            </button>
-
+            <button style={s.btn} onClick={submitOtp}>Verify & Continue</button>
             <div style={s.linkBtn} onClick={() => setStep("mobile")}>
               ← Back
             </div>
@@ -103,103 +108,3 @@ export default function LoginPage({ defaultRole = "buyer" }) {
     </div>
   );
 }
-
-// import { useMemo, useState } from "react";
-// import { useLocation, useNavigate } from "react-router-dom";
-
-// import { loginStyles as s } from "./LoginPage.styles";
-// import { requestOtp, verifyOtp } from "../../api/authApi";
-
-// export default function LoginPage({ defaultRole = "buyer" }) {
-//   const [mobile, setMobile] = useState("");
-//   const [otp, setOtp] = useState("");
-//   const [step, setStep] = useState("mobile");
-//   const [error, setError] = useState("");
-
-//   const location = useLocation();
-//   const navigate = useNavigate();
-
-//   // role decided by route: /login => buyer, /s/login => seller
-//   const role = useMemo(
-//     () => (location.pathname.startsWith("/s/") ? "seller" : defaultRole),
-//     [location.pathname, defaultRole]
-//   );
-
-//   const signupPath = role === "seller" ? "/s/signup" : "/signup";
-
-//   const sendOtp = async () => {
-//     setError("");
-//     if (!/^[6-9][0-9]{9}$/.test(mobile)) {
-//       setError("Enter valid mobile number");
-//       return;
-//     }
-//     try {
-//       await requestOtp(mobile, role); // role only here
-//       setStep("otp");
-//     } catch (e) {
-//       setError(e?.response?.data?.message || "Failed to send OTP");
-//     }
-//   };
-
-//   const submitOtp = async () => {
-//     setError("");
-//     try {
-//       await verifyOtp(mobile, otp); // no role here
-//       navigate("/products");
-
-//     } catch (e) {
-//       setError(e?.response?.data?.message || "Login failed");
-//     }
-//   };
-
-//   return (
-//     <div style={s.wrapper}>
-//       <div style={s.card}>
-//         <div style={s.title}>Welcome 👋</div>
-//         <div style={s.subtitle}>
-//           {role === "seller" ? "Seller portal" : "Buyer portal"}
-//         </div>
-
-//         {error && <div style={s.error}>{error}</div>}
-
-//         {step === "mobile" && (
-//           <>
-//             <input
-//               style={s.input}
-//               placeholder="Enter mobile number"
-//               value={mobile}
-//               onChange={(e) => setMobile(e.target.value)}
-//             />
-//             <button style={s.btn} onClick={sendOtp}>
-//               Get OTP
-//             </button>
-//             <div
-//               style={s.linkBtn}
-//               onClick={() => navigate(role === "seller" ? "/s/signup" : "/signup")}
-//             >
-//               New user? Create an account
-//             </div>
-//           </>
-//         )}
-
-//         {step === "otp" && (
-//           <>
-//             <input
-//               style={s.input}
-//               placeholder="Enter OTP"
-//               value={otp}
-//               onChange={(e) => setOtp(e.target.value)}
-//             />
-//             <button style={s.btn} onClick={submitOtp}>
-//               Verify & Continue
-//             </button>
-
-//             <div style={s.linkBtn} onClick={() => setStep("mobile")}>
-//               ← Back
-//             </div>
-//           </>
-//         )}
-//       </div>
-//     </div>
-//   );
-// }

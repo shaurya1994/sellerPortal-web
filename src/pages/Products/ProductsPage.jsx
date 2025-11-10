@@ -7,9 +7,7 @@ import { productsPageStyles } from "./ProductsPage.styles";
 import Pagination from "../../components/Pagination/Pagination";
 import ProductGrid from "../../components/ProductGrid/ProductGrid";
 import ProductAddModal from "../../components/ProductAddModal/ProductAddModal";
-import NetworkErrorIcon from "../../components/NetworkErrorIcon/NetworkErrorIcon";
 
-// import { fetchSellerProducts } from "../../api/products";
 import { fetchProducts } from "../../api/products";
 import { useSelector } from "react-redux";
 import { selectAuth } from "../../store/authSlice";
@@ -73,6 +71,7 @@ const ProductsPage = () => {
 
   const { user } = useSelector(selectAuth);
   const role = user?.role || "buyer";
+  const isSeller = role === "seller";
 
   // --- DATA FETCHER ---
   const loadProducts = useCallback(
@@ -167,24 +166,6 @@ const ProductsPage = () => {
       );
     }
 
-    if (networkError) {
-      return (
-        <div style={productsPageStyles.networkErrorContainer}>
-          <NetworkErrorIcon />
-          <h4 style={productsPageStyles.networkErrorTitle}>No Network Connection</h4>
-          <p style={productsPageStyles.networkErrorText}>
-            Kindly check your internet connection and try again.
-          </p>
-          <button
-            style={productsPageStyles.retryBtn}
-            onClick={() => loadProducts(currentPage)}
-          >
-            Retry
-          </button>
-        </div>
-      );
-    }
-
     if (products.length === 0) {
       return (
         <div style={productsPageStyles.emptyState}>
@@ -218,7 +199,7 @@ const ProductsPage = () => {
     );
   };
 
-  const showHeader = !loading && !networkError;
+  const showHeader = !loading;
 
   return (
     <div style={productsPageStyles.container}>
@@ -226,7 +207,9 @@ const ProductsPage = () => {
         <div style={productsPageStyles.headerRow}>
           <div style={productsPageStyles.headerLeft}>
             <div style={productsPageStyles.titleWrapper}>
-              <h2 style={productsPageStyles.title}>My Products</h2>
+              <h2 style={productsPageStyles.title}>
+                {isSeller ? "My Products" : "Products"}
+              </h2>
               <div style={productsPageStyles.titleUnderline} />
             </div>
           </div>
@@ -298,7 +281,7 @@ const ProductsPage = () => {
         {renderContent()}
       </div>
 
-      {!networkError && !loading && products.length > 0 && meta.totalPages > 1 && (
+      {!loading && products.length > 0 && meta.totalPages > 1 && (
         <div style={productsPageStyles.paginationRow}>
           <Pagination
             current={meta.page}
@@ -319,7 +302,6 @@ const ProductsPage = () => {
 };
 
 export default ProductsPage;
-
 
 // // FILE: src/pages/ProductsPage/ProductsPage.jsx
 
@@ -394,40 +376,6 @@ export default ProductsPage;
 //   const totalGridSlots = ROWS_PER_PAGE * columns;
 //   const itemsPerPage = Math.max(1, totalGridSlots - 1);
 
-//   // --- DATA FETCHER ---
-//   // const loadProducts = useCallback(
-//   //   async (page = 1) => {
-//   //     const fetchId = ++latestFetchIdRef.current;
-
-//   //     setLoading(true);
-//   //     try {
-//   //       const response = await fetchSellerProducts({
-//   //         page,
-//   //         limit: itemsPerPage,
-//   //         search: searchTerm || "",
-//   //         category_id: selectedCategory || "",
-//   //       });
-
-//   //       if (fetchId === latestFetchIdRef.current) {
-//   //         setProducts(response.data || []);
-//   //         setMeta(response.meta || { page: 1, totalPages: 1, total: 0 });
-//   //         setNetworkError(false);
-//   //       }
-//   //     } catch (err) {
-//   //       if (fetchId === latestFetchIdRef.current) {
-//   //         console.error("Error loading products:", err);
-//   //         setNetworkError(true);
-//   //         setProducts([]);
-//   //       }
-//   //     } finally {
-//   //       if (fetchId === latestFetchIdRef.current) {
-//   //         setLoading(false);
-//   //       }
-//   //     }
-//   //   },
-//   //   [itemsPerPage, searchTerm, selectedCategory]
-//   // );
-  
 //   const { user } = useSelector(selectAuth);
 //   const role = user?.role || "buyer";
 

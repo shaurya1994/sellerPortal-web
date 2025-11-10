@@ -3,6 +3,14 @@
 import { COLORS } from "../../constants/colors";
 
 export const layoutStyles = {
+  /* SERVER STATUS */
+  serverStatus: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    minHeight: "50vh",
+    color: "#777",
+  },
   /* HEADER STYLES */
   header: {
     background: `linear-gradient(90deg, ${COLORS.primary}, ${COLORS.textLight}, ${COLORS.text})`,
