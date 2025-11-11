@@ -1,4 +1,5 @@
-// FILE: TesterPage.jsx
+// FILE: src/pages/Tester/TesterPage.jsx
+
 import "bootstrap/dist/css/bootstrap.min.css";
 
 const TesterPage = () => {

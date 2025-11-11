@@ -19,16 +19,3 @@ export default function RequireRole({ role, children }) {
 
   return children;
 }
-
-// // FILE: src/routes/RequireRole.jsx 
-
-// import { useSelector } from "react-redux";
-// import { Navigate } from "react-router-dom";
-
-// import { selectMode } from "../store/authSlice";
-
-// export default function RequireRole({ role, children }) {
-//   const mode = useSelector(selectMode);
-//   if (mode !== role) return <Navigate to="/" replace />;
-//   return children;
-// }

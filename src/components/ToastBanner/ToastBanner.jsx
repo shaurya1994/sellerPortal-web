@@ -8,7 +8,7 @@ const ToastBanner = ({ message = "", type = "success" }) => {
   useEffect(() => {
     if (message) {
       setVisible(true);
-      const timer = setTimeout(() => setVisible(false), 2000); // stays 2s
+      const timer = setTimeout(() => setVisible(false), 2000); // Stays 2s
       return () => clearTimeout(timer);
     }
   }, [message]);
@@ -21,7 +21,7 @@ const ToastBanner = ({ message = "", type = "success" }) => {
         ...styles.toastBanner,
         ...(type === "success" ? styles.toastSuccess : styles.toastError),
         opacity: visible ? 1 : 0,
-        transform: visible ? "translateY(0)" : "translateY(20px)", // 👈 smooth slide up
+        transform: visible ? "translateY(0)" : "translateY(20px)", // Smooth slide up
       }}
     >
       {message}
@@ -30,23 +30,3 @@ const ToastBanner = ({ message = "", type = "success" }) => {
 };
 
 export default ToastBanner;
-
-
-// // FILE: src/components/ToastBanner/ToastBanner.jsx
-// import { memo } from "react";
-// import { toastBannerStyles as styles } from "./ToastBanner.styles";
-
-// const ToastBanner = memo(({ message, type = "success" }) => {
-//   if (!message) return null;
-
-//   const typeStyle =
-//     type === "error" ? styles.toastError : styles.toastSuccess;
-
-//   return (
-//     <div style={{ ...styles.toastBanner, ...typeStyle }}>
-//       {message}
-//     </div>
-//   );
-// });
-
-// export default ToastBanner;

@@ -39,7 +39,6 @@ export default function LoginPage({ defaultRole = "buyer" }) {
     );
   }
 
-
   if (!serverOnline) return <ServerOffline onRetry={checkServer} />;
 
   const signupPath = role === "seller" ? "/s/signup" : "/signup";
