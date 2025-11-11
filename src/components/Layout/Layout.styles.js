@@ -1,16 +1,8 @@
-// FILE: src/components/Layout/LayoutStyles.jsx
+// FILE: src/components/Layout/LayoutStyles.js
 
 import { COLORS } from "../../constants/colors";
 
 export const layoutStyles = {
-  /* SERVER STATUS */
-  serverStatus: {
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    minHeight: "50vh",
-    color: "#777",
-  },
   /* HEADER STYLES */
   header: {
     background: `linear-gradient(90deg, ${COLORS.primary}, ${COLORS.textLight}, ${COLORS.text})`,
@@ -91,43 +83,6 @@ export const layoutStyles = {
     color: "#d9534f",
     fontWeight: 500,
   },
-  /* HEADER STYLES */
-  // header: {
-  //   background: `linear-gradient(90deg, ${COLORS.primary}, ${COLORS.textLight}, ${COLORS.text})`,
-  //   paddingTop: "0.6rem",
-  //   paddingBottom: "0.6rem",
-  //   boxShadow: `0 2px 4px ${COLORS.shadow}30`,
-  // },
-  // logoContainer: {
-  //   width: "40px",
-  //   height: "40px",
-  //   borderRadius: "50%",
-  //   backgroundColor: "#fff",
-  //   display: "flex",
-  //   alignItems: "center",
-  //   justifyContent: "center",
-  //   border: `1px solid ${COLORS.border}`,
-  //   boxShadow: `0 2px 6px ${COLORS.shadow}25`,
-  //   marginRight: "10px",
-  // },
-  // logo: {
-  //   width: "36px",
-  //   height: "36px",
-  //   objectFit: "contain",
-  // },
-  // companyName: {
-  //   color: COLORS.white,
-  //   fontWeight: 600,
-  //   letterSpacing: "0.3px",
-  // },
-  // profileImage: {
-  //   width: "42px",
-  //   height: "42px",
-  //   borderRadius: "50%",
-  //   border: `2px solid ${COLORS.white}`,
-  //   objectFit: "cover",
-  //   boxShadow: `0 2px 6px ${COLORS.shadow}40`,
-  // },
   /* TAB SWITCHER */
   tabWrapper: {
     backgroundColor: COLORS.card,
