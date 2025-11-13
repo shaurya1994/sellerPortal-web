@@ -7,7 +7,7 @@ import { BrowserRouter } from "react-router-dom";
 
 import App from "./App.jsx";
 import store from "./store/index.js";
-import { bootstrapSession } from "./api/authApi";
+import { bootstrapSession } from "./api/auth";
 
 import "./styles/global.css";
 import "bootstrap/dist/css/bootstrap.min.css";

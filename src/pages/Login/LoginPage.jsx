@@ -5,7 +5,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 
 import { loginStyles as s } from "./LoginPage.styles";
 
-import { requestOtp, verifyOtp } from "../../api/authApi";
+import { requestOtp, verifyOtp } from "../../api/auth";
 
 import { useServerStatus } from "../../hooks/useServerStatus";
 import ServerOffline from "../../components/ServerOffline/ServerOffline";

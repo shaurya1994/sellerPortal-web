@@ -1,7 +1,7 @@
 // FILE: src/hooks/useLogout.js
 
 import { useSelector } from "react-redux";
-import { logout as logoutApi } from "../api/authApi";
+import { logout as logoutApi } from "../api/auth";
 
 export const useLogout = () => {
   const { user } = useSelector((s) => s.auth || {});

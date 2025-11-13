@@ -7,7 +7,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 
 import { loginStyles as s } from "../Login/LoginPage.styles";
 
-import { requestSignupOtp, verifySignupOtp } from "../../api/authApi";
+import { requestSignupOtp, verifySignupOtp } from "../../api/auth";
 
 const isValidEmail = (v) => /\S+@\S+\.\S+/.test(v);
 const isValidMobile = (v) => /^[6-9][0-9]{9}$/.test(v);
