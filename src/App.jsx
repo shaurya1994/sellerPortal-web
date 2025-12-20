@@ -2,8 +2,8 @@
 
 import { Routes, Route, Navigate } from "react-router-dom";
 
-import Layout from "./components/Layout/layout";
 import RequireAuth from "./routes/RequireAuth";
+import Layout from "./components/Layout/layout";
 
 import LoginPage from "./pages/Login/LoginPage";
 import SignUpPage from "./pages/SignUp/SignUpPage";

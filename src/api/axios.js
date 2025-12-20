@@ -32,10 +32,7 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-// ============================
 // Refresh Token Logic
-// ============================
-
 let isRefreshing = false;
 let failedQueue = [];
 

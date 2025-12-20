@@ -93,7 +93,8 @@ export default function LoginPage({ defaultRole = "buyer" }) {
           <>
             <input
               style={s.input}
-              placeholder="Enter OTP"
+              // placeholder="Enter OTP"
+              placeholder="OTP: 123456"
               value={otp}
               onChange={(e) => setOtp(e.target.value)}
             />
