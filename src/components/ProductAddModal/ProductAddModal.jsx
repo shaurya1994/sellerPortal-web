@@ -189,6 +189,10 @@ const ProductAddModal = memo(({ show, onClose, onSubmit }) => {
   };
 
   // --- SUBMIT ---
+  // Add this state at the top with your other useState declarations
+  const [isUploading, setIsUploading] = useState(false);
+
+  // Modified handleSubmit function
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) return;
@@ -200,21 +204,52 @@ const ProductAddModal = memo(({ show, onClose, onSubmit }) => {
     }));
 
     const payload = new FormData();
-    // payload.append("name", formState.name);
-    payload.append("name",formState.name.trim().replace(/\s+/g, " "));
+    payload.append("name", formState.name.trim().replace(/\s+/g, " "));
     payload.append("category_id", formState.category_id);
     formState.photos.forEach((file) => payload.append("photos", file));
     payload.append("variants", JSON.stringify(formattedVariants));
 
     try {
+      setIsUploading(true); // ✅ Start uploading state
       const result = await addSellerProduct(payload);
       showToast("✅ Product added successfully!");
       onSubmit?.(result);
+
     } catch (error) {
       console.error("Error:", error);
       alert(error.response?.data?.message || "❌ Failed to add product. Please try again.");
+
+    } finally {
+      setIsUploading(false); // ✅ Always reset uploading state
     }
   };
+
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   if (!validateForm()) return;
+
+  //   const formattedVariants = formState.variants.map((v) => ({
+  //     ...v,
+  //     size: formatFieldValue(v.size, "size"),
+  //     weight: formatFieldValue(v.weight, "weight", formState.weightUnit),
+  //   }));
+
+  //   const payload = new FormData();
+  //   // payload.append("name", formState.name);
+  //   payload.append("name",formState.name.trim().replace(/\s+/g, " "));
+  //   payload.append("category_id", formState.category_id);
+  //   formState.photos.forEach((file) => payload.append("photos", file));
+  //   payload.append("variants", JSON.stringify(formattedVariants));
+
+  //   try {
+  //     const result = await addSellerProduct(payload);
+  //     showToast("✅ Product added successfully!");
+  //     onSubmit?.(result);
+  //   } catch (error) {
+  //     console.error("Error:", error);
+  //     alert(error.response?.data?.message || "❌ Failed to add product. Please try again.");
+  //   }
+  // };
 
   // --- RENDER ---
   return (
@@ -240,15 +275,6 @@ const ProductAddModal = memo(({ show, onClose, onSubmit }) => {
               {/* Product Name */}
               <div style={styles.formGroup}>
                 <label htmlFor="name" style={styles.label}>Product Name</label>
-                {/* <input
-                  type="text"
-                  id="name"
-                  name="name"
-                  value={formState.name}
-                  onChange={handleInputChange}
-                  style={styles.input}
-                  required
-                /> */}
                 <input
                   type="text"
                   id="name"
@@ -395,7 +421,7 @@ const ProductAddModal = memo(({ show, onClose, onSubmit }) => {
               </div>
 
               {/* Submit */}
-              <div style={styles.formGroup}>
+              {/* <div style={styles.formGroup}>
                 <button
                   type="submit"
                   style={{
@@ -407,7 +433,25 @@ const ProductAddModal = memo(({ show, onClose, onSubmit }) => {
                 >
                   Submit Product
                 </button>
+              </div> */}
+
+              {/* Submit */}
+              <div style={styles.formGroup}>
+                <button
+                  type="submit"
+                  style={{
+                    ...styles.submitBtn,
+                    ...(submitHover && !isUploading ? styles.submitBtnHover : {}),
+                    opacity: isUploading ? 0.6 : 1, // ✅ Dim when uploading
+                  }}
+                  onMouseEnter={() => setSubmitHover(true)}
+                  onMouseLeave={() => setSubmitHover(false)}
+                  disabled={isUploading} // ✅ Disable button when uploading
+                >
+                  {isUploading ? "Uploading..." : "Submit Product"} {/* ✅ Show uploading text */}
+                </button>
               </div>
+
             </form>
           </div>
         </div>

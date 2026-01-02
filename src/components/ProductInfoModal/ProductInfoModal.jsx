@@ -210,9 +210,11 @@ const ProductInfoModal = memo(({ show, onClose, product, onProductRefresh }) => 
       onProductRefresh?.({ ...product, photos: res.photos || [] });
       showToast("✅ Images updated successfully!");
       modalRef.current?.scrollTo({ top: 0, behavior: "smooth" });
+
     } catch (err) {
       console.error("Image update failed:", err);
       showToast("❌ Failed to update images.", "error");
+      
     } finally {
       setIsUploading(false);
     }

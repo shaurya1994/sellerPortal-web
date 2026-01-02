@@ -2,6 +2,8 @@
 
 import { useState, useEffect, useCallback } from "react";
 
+const BASE_URL = import.meta.env.VITE_API_URL;
+
 export const useServerStatus = () => {
   const [serverOnline, setServerOnline] = useState(true);
   const [initialCheckDone, setInitialCheckDone] = useState(false);
@@ -12,9 +14,9 @@ export const useServerStatus = () => {
       const controller = new AbortController();
       const timeout = setTimeout(() => controller.abort(), 3000);
 
-      const res = await fetch("http://localhost:5000/jwalaMalini", {
+      const res = await fetch(`${BASE_URL}/jwalaMalini`, {
         method: "GET",
-        mode: "no-cors", // prevents CORS error
+        mode: "no-cors",
         signal: controller.signal,
       });
 
