@@ -189,7 +189,6 @@ const ProductAddModal = memo(({ show, onClose, onSubmit }) => {
   };
 
   // --- SUBMIT ---
-  // Add this state at the top with your other useState declarations
   const [isUploading, setIsUploading] = useState(false);
 
   // Modified handleSubmit function
@@ -210,8 +209,12 @@ const ProductAddModal = memo(({ show, onClose, onSubmit }) => {
     payload.append("variants", JSON.stringify(formattedVariants));
 
     try {
-      setIsUploading(true); // ✅ Start uploading state
+      setIsUploading(true);
       const result = await addSellerProduct(payload);
+      
+      // ✅ Reset form immediately after successful upload
+      resetForm();
+      
       showToast("✅ Product added successfully!");
       onSubmit?.(result);
 
@@ -220,9 +223,9 @@ const ProductAddModal = memo(({ show, onClose, onSubmit }) => {
       alert(error.response?.data?.message || "❌ Failed to add product. Please try again.");
 
     } finally {
-      setIsUploading(false); // ✅ Always reset uploading state
+      setIsUploading(false); // ✅ Button re-enables AFTER form is cleared
     }
-  };
+  };  
 
   // const handleSubmit = async (e) => {
   //   e.preventDefault();
