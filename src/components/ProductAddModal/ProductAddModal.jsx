@@ -189,33 +189,6 @@ const ProductAddModal = memo(({ show, onClose, onSubmit }) => {
   };
 
   // --- SUBMIT ---
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
-  //   if (!validateForm()) return;
-
-  //   const formattedVariants = formState.variants.map((v) => ({
-  //     ...v,
-  //     size: formatFieldValue(v.size, "size"),
-  //     weight: formatFieldValue(v.weight, "weight", formState.weightUnit),
-  //   }));
-
-  //   const payload = new FormData();
-  //   // payload.append("name", formState.name);
-  //   payload.append("name",formState.name.trim().replace(/\s+/g, " "));
-  //   payload.append("category_id", formState.category_id);
-  //   formState.photos.forEach((file) => payload.append("photos", file));
-  //   payload.append("variants", JSON.stringify(formattedVariants));
-
-  //   try {
-  //     const result = await addSellerProduct(payload);
-  //     showToast("✅ Product added successfully!");
-  //     onSubmit?.(result);
-  //   } catch (error) {
-  //     console.error("Error:", error);
-  //     alert(error.response?.data?.message || "❌ Failed to add product. Please try again.");
-  //   }
-  // };
-
   // Add this state at the top with your other useState declarations
   const [isUploading, setIsUploading] = useState(false);
 
@@ -417,21 +390,6 @@ const ProductAddModal = memo(({ show, onClose, onSubmit }) => {
                   + Add Variant
                 </button>
               </div>
-
-              {/* Submit */}
-              {/* <div style={styles.formGroup}>
-                <button
-                  type="submit"
-                  style={{
-                    ...styles.submitBtn,
-                    ...(submitHover ? styles.submitBtnHover : {}),
-                  }}
-                  onMouseEnter={() => setSubmitHover(true)}
-                  onMouseLeave={() => setSubmitHover(false)}
-                >
-                  Submit Product
-                </button>
-              </div> */}
 
               {/* Submit */}
               <div style={styles.formGroup}>
