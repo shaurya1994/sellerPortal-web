@@ -165,7 +165,7 @@ export default function SignUpPage({ defaultRole = "buyer" }) {
             <input style={s.input} name="company_name" placeholder="Company name" value={form.company_name} onChange={onChange} />
             <input style={s.input} name="email" placeholder="Email" value={form.email} onChange={onChange} />
             <input style={s.input} name="mobile" placeholder="Mobile" value={form.mobile} onChange={onChange} />
-            <input style={s.input} name="gst_number" placeholder="GST Number" value={form.gst_number} onChange={onChange} />
+            <input style={s.input} name="gst_number" placeholder="GST (Optional)" value={form.gst_number} onChange={onChange} />
 
             <button style={s.btn} onClick={sendOtp} disabled={loading}>
               {loading ? "Sending…" : "Send OTP"}
@@ -188,7 +188,7 @@ export default function SignUpPage({ defaultRole = "buyer" }) {
 
             <input
               style={s.input}
-              placeholder="Enter OTP"
+              placeholder="Enter OTP: 123456"
               value={otp}
               onChange={(e) => setOtp(e.target.value)}
             />
